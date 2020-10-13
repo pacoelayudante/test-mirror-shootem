@@ -1,0 +1,85 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &3484476076410952678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2479040714273199779}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ab2a88bb13668d42947ecc4aae852b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  der: 275
+  aba: 274
+  izq: 276
+  arr: 273
+  rifleTimeToLower: 3
+--- !u!1001 &963353424893196052
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3402987048583700919, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
+      propertyPath: m_Name
+      value: WachinAvatar Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 4491740277868640107, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.95
+      objectReference: {fileID: 0}
+    - target: {fileID: 4491740277868640107, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4491740277868640107, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -2.66
+      objectReference: {fileID: 0}
+    - target: {fileID: 4491740277868640107, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4491740277868640107, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4491740277868640107, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4491740277868640107, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4491740277868640107, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4491740277868640107, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4491740277868640107, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4491740277868640107, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5797295653408594816, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
+--- !u!1 &2479040714273199779 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3402987048583700919, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
+  m_PrefabInstance: {fileID: 963353424893196052}
+  m_PrefabAsset: {fileID: 0}
