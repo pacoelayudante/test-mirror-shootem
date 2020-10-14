@@ -5,6 +5,8 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class Atacable : MonoBehaviour
 {
+    public static List<Atacable> atacables = new List<Atacable>();
+    
     public Vector3 Pos => transform.position;
 
     public float dañoAcumulado = 0f;
@@ -12,5 +14,12 @@ public class Atacable : MonoBehaviour
     public void RecibirAtaque(float daño) {
         dañoAcumulado += daño;
         AlRecibirAtaque?.Invoke(daño);
+    }
+
+    private void OnEnable() {
+        atacables.Add(this);
+    }
+    private void OnDisable() {
+        atacables.Remove(this);
     }
 }

@@ -6,6 +6,7 @@ using UnityEngine;
 public class ControlFlechitas : MonoBehaviour
 {
     public KeyCode der = KeyCode.RightArrow,aba = KeyCode.DownArrow,izq = KeyCode.LeftArrow,arr = KeyCode.UpArrow;
+    public KeyCode derAlt = KeyCode.D,abaAlt = KeyCode.S,izqAlt = KeyCode.A,arrAlt = KeyCode.W;
     public float rifleTimeToLower = 3f;
     float currentRifleLowerTime = 0;
 
@@ -14,17 +15,17 @@ public class ControlFlechitas : MonoBehaviour
 
     void Update() {
         var intent = Vector3.zero;
-        var isDer = Input.GetKey(der);
-        var isIzq = Input.GetKey(izq);
-        var isArr = Input.GetKey(arr);
-        var isAba = Input.GetKey(aba);
+        var isDer = Input.GetKey(der) || Input.GetKey(derAlt);
+        var isIzq = Input.GetKey(izq) || Input.GetKey(izqAlt);
+        var isArr = Input.GetKey(arr) || Input.GetKey(arrAlt);
+        var isAba = Input.GetKey(aba) || Input.GetKey(abaAlt);
         if (isDer^isIzq) {
             intent += isDer?Vector3.right:Vector3.left;
         }
         if (isAba^isArr) {
             intent += isArr?Vector3.forward:Vector3.back;
         }
-        Wachin.posBuscada = transform.position+intent*Wachin.maxVel;
+        Wachin.PosBuscada = transform.position+intent*Wachin.maxVel*Time.deltaTime*2f;
 
         var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         var plane = new Plane(transform.up, transform.position);

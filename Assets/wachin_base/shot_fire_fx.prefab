@@ -174,6 +174,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4168611093807676385}
   - component: {fileID: 8888099084229379135}
+  - component: {fileID: 4670693320760718735}
   m_Layer: 0
   m_Name: shot_fire_fx
   m_TagString: Untagged
@@ -215,6 +216,21 @@ MonoBehaviour:
   colorFadeDefault: {r: 1, g: 1, b: 1, a: 0}
   flashTimeDefault: 0.2
   flashColorDefault: {r: 1, g: 0, b: 0, a: 1}
+--- !u!114 &4670693320760718735
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1275506307153848705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0abea7cc2ee44b4fa95dd62c95eae8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  randomizeFlipX: 0
+  randomizeFlipY: 1
+  rotateRandomAroundAxis: {x: 0, y: 0, z: 1}
 --- !u!1 &8461384586622445712
 GameObject:
   m_ObjectHideFlags: 0

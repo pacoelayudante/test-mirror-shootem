@@ -10,6 +10,7 @@ public class Rifle : MonoBehaviour
     public float velocidadDisparo = 20;
     public float distanciaDisparo = 40;
     public float cooldown = .4f;
+    public float daño = 1f;
 
     ItemActivo _itemActivo;
     ItemActivo ItemActivo => _itemActivo ? _itemActivo : _itemActivo = GetComponent<ItemActivo>();
@@ -42,6 +43,11 @@ public class Rifle : MonoBehaviour
     {
         disparo.onTriggerEnter += (col) =>
         {//on hit
+            var atacable = col.GetComponent<Atacable>();
+            if (atacable) {
+                atacable.RecibirAtaque(daño);
+            }
+
             var vfx = Instantiate(vfxPrefab, disparo.transform.position, Quaternion.Euler(0f, 180f, 0f) * disparo.transform.rotation);
             vfx.ColorFade(fadeFrom: false);
             Destroy(vfx.gameObject, vfx.fadeTimeDefault);
