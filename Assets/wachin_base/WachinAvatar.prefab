@@ -196,7 +196,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83239b7323cf1ab4ea25eee9539fa6ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxVel: 30
+  maxVel: 10
   acel: 90
   wallLayers:
     serializedVersion: 2

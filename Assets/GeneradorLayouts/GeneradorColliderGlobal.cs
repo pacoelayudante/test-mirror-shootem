@@ -127,14 +127,14 @@ public class GeneradorColliderGlobal : MonoBehaviour
         vertices2 = tessInterno.Vertices.Select(cont => new Vector2(cont.Position.X, cont.Position.Y));
         var meshVerts2 = vertices2.Select(vert=>new Vector3(vert.x,0f,vert.y)).Concat(vertices2.Select(vert=>new Vector3(vert.x,1f,vert.y)));
         meshVerts = meshVerts.Concat( meshVerts2.Concat(meshVerts2) );
-        for (int i = 0; genInterior && i < tessInterno.ElementCount; i++)
+        for (int i = 0; i < tessInterno.ElementCount; i++)
         {
             var baseIndex = tessInterno.Elements[i * 2];
             var count = tessInterno.Elements[i * 2 + 1];
             colliderGlobal.SetPath(i+tessExterno.ElementCount, vertices2.Skip(baseIndex).Take(count).ToArray());
             
             baseIndex += tessExterno.VertexCount*4;
-            for (int v=0; v<count; v++) {
+            for (int v=0; genInterior && v<count; v++) {
                 int v2 = (v+1)%count;
                 tris.Add(v+baseIndex);
                 tris.Add(v2+baseIndex+tessInterno.VertexCount*2);
@@ -152,12 +152,17 @@ public class GeneradorColliderGlobal : MonoBehaviour
             if (genPiso) tris.AddRange( tessPiso.Elements.Select(index=>index+baseIndex).Reverse() );
             meshVerts = meshVerts.Concat(meshVerts3);
 
-            var contornoInterno = Enumerable.Repeat(new ContourVertex[0],tessInterno.ElementCount)
-                .Select( (_,index)=>tessInterno.Vertices.Skip(tessInterno.Elements[index]).Take(tessInterno.Elements[index+1]) );
-            foreach (var cont in contornoInterno)tessTechos.AddContour(cont.ToArray(), ContourOrientation.Clockwise);
-            tessTechos.Tessellate(WindingRule.Positive, ElementType.Polygons);
+        // lo que se hizo para el techo seguro que se podria hacer para el piso y seria mas facil creooo
+            var contornos = Enumerable.Repeat(new ContourVertex[0],tessInterno.ElementCount)
+                .Select( (_,index)=>tessInterno.Vertices.Skip(tessInterno.Elements[index*2]).Take(tessInterno.Elements[index*2+1]) );
+            foreach (var cont in contornos)tessTechos.AddContour(cont.ToArray(), ContourOrientation.CounterClockwise);
+            
+            contornos = Enumerable.Repeat(new ContourVertex[0],tessExterno.ElementCount)
+                .Select( (_,index)=>tessExterno.Vertices.Skip(tessExterno.Elements[index*2]).Take(tessExterno.Elements[index*2+1]) );
+            foreach (var cont in contornos)tessTechos.AddContour(cont.ToArray(), ContourOrientation.Clockwise);
+            // tessTechos.Tessellate(WindingRule.Positive, ElementType.Polygons);
 
-            tessTechos.Tessellate(WindingRule.Positive, ElementType.Polygons);
+            tessTechos.Tessellate(WindingRule.EvenOdd, ElementType.Polygons);
             var meshVerts4 = tessTechos.Vertices.Select(cont=>new Vector3(cont.Position.X, 1f, cont.Position.Y));
             baseIndex = meshVerts.Count();
             if (genTechos) tris.AddRange( tessTechos.Elements.Select(index=>index+baseIndex).Reverse() );

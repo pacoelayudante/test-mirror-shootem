@@ -1005,6 +1005,9 @@ MonoBehaviour:
   disparoPrefab: {fileID: -4609160338974247793, guid: cfd9043a40a6b134abd9523249108171, type: 3}
   vfxPrefab: {fileID: 8888099084229379135, guid: 91ffa67ea88a307429ab9ea21dd6a0f3, type: 3}
   velocidadDisparo: 20
+  distanciaDisparo: 40
+  cooldown: 0.4
+  "da\xF1o": 1
 --- !u!1 &6883942287005191089
 GameObject:
   m_ObjectHideFlags: 0

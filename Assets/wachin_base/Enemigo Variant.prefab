@@ -117,10 +117,6 @@ PrefabInstance:
     m_TransformParent: {fileID: 8836798022547678617}
     m_Modifications:
     - target: {fileID: 5502286836259317396, guid: 4c51c5c475256c142849742e294b8d27, type: 3}
-      propertyPath: velocidadDisparo
-      value: 15
-      objectReference: {fileID: 0}
-    - target: {fileID: 5502286836259317396, guid: 4c51c5c475256c142849742e294b8d27, type: 3}
       propertyPath: cooldown
       value: 0.7
       objectReference: {fileID: 0}
@@ -132,6 +128,10 @@ PrefabInstance:
       propertyPath: vfxPrefab
       value: 
       objectReference: {fileID: 270466137777467827, guid: 5ce26d63cc5653c4f8d067c98550b3df, type: 3}
+    - target: {fileID: 5502286836259317396, guid: 4c51c5c475256c142849742e294b8d27, type: 3}
+      propertyPath: velocidadDisparo
+      value: 17
+      objectReference: {fileID: 0}
     - target: {fileID: 5908337587185149558, guid: 4c51c5c475256c142849742e294b8d27, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.26
