@@ -34,7 +34,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1490432158079265854, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.8551114
+      value: 0.99445117
       objectReference: {fileID: 0}
     - target: {fileID: 1490432158079265854, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
       propertyPath: m_LocalRotation.z
@@ -42,7 +42,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1490432158079265854, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.5184443
+      value: -0.10519947
+      objectReference: {fileID: 0}
+    - target: {fileID: 2380239601825938957, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
+      propertyPath: equipo
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3402987048583700919, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
       propertyPath: m_Name
@@ -111,6 +115,17 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 3402987048583700919, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
   m_PrefabInstance: {fileID: 963353424893196052}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &3194964854138784025 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2380239601825938957, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
+  m_PrefabInstance: {fileID: 963353424893196052}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2479040714273199779}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bb82230ea3995b42a6168759c4665b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &7645125553472543473 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7441765153396501989, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
@@ -127,6 +142,14 @@ PrefabInstance:
       propertyPath: cooldown
       value: 0.2
       objectReference: {fileID: 0}
+    - target: {fileID: 5502286836259317396, guid: 4c51c5c475256c142849742e294b8d27, type: 3}
+      propertyPath: amplitudRandom
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 5502286836259317396, guid: 4c51c5c475256c142849742e294b8d27, type: 3}
+      propertyPath: equipo
+      value: 
+      objectReference: {fileID: 3194964854138784025}
     - target: {fileID: 5908337587185149558, guid: 4c51c5c475256c142849742e294b8d27, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.26

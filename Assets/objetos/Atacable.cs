@@ -5,6 +5,7 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public class Atacable : MonoBehaviour
 {
+    public int equipo = -1;
     public static List<Atacable> atacables = new List<Atacable>();
     
     public Vector3 Pos => transform.position;

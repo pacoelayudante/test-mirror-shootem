@@ -141,6 +141,7 @@ GameObject:
   - component: {fileID: 375625724217923447}
   - component: {fileID: -162605804222372040}
   - component: {fileID: 3049136566394674185}
+  - component: {fileID: 2380239601825938957}
   m_Layer: 0
   m_Name: WachinAvatar
   m_TagString: Untagged
@@ -239,6 +240,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9374f2ad60ef9d4c889452d2af8a62f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  equipo: -1
   "da\xF1oAcumulado": 0
 --- !u!136 &3049136566394674185
 CapsuleCollider:
@@ -254,6 +256,19 @@ CapsuleCollider:
   m_Height: 4.5
   m_Direction: 1
   m_Center: {x: 0, y: 2.25, z: 0}
+--- !u!114 &2380239601825938957
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3402987048583700919}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bb82230ea3995b42a6168759c4665b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  equipo: -1
 --- !u!1 &6007062247570212729
 GameObject:
   m_ObjectHideFlags: 0
@@ -508,6 +523,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7441765153396501989}
     m_Modifications:
+    - target: {fileID: 5502286836259317396, guid: 4c51c5c475256c142849742e294b8d27, type: 3}
+      propertyPath: equipo
+      value: 
+      objectReference: {fileID: 2380239601825938957}
     - target: {fileID: 5908337587185149558, guid: 4c51c5c475256c142849742e294b8d27, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.26

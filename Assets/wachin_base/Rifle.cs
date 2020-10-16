@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Rifle : MonoBehaviour
 {
+    public Equipo equipo;
     public Transform salidaDisparo;
     public Disparo disparoPrefab;
     public ColorControl vfxPrefab;
@@ -11,6 +12,7 @@ public class Rifle : MonoBehaviour
     public float distanciaDisparo = 40;
     public float cooldown = .4f;
     public float daño = 1f;
+    public float amplitudRandom = 0f;
 
     ItemActivo _itemActivo;
     ItemActivo ItemActivo => _itemActivo ? _itemActivo : _itemActivo = GetComponent<ItemActivo>();
@@ -30,7 +32,8 @@ public class Rifle : MonoBehaviour
         if (Time.time < tSiguienteDisparo) return;
         tSiguienteDisparo = Time.time+cooldown;
 
-        var disparo = Instantiate(disparoPrefab, salidaDisparo.position, salidaDisparo.rotation);
+        var rotacionRandom = Quaternion.Euler(0f,Random.Range(-amplitudRandom,amplitudRandom),0f);
+        var disparo = Instantiate(disparoPrefab, salidaDisparo.position, rotacionRandom * salidaDisparo.rotation);
         disparo.Velocidad = disparo.transform.forward * velocidadDisparo;
         disparo.StartCoroutine(AutoDestruirDisparo(disparo, distanciaDisparo / velocidadDisparo));
 
@@ -43,8 +46,10 @@ public class Rifle : MonoBehaviour
     {
         disparo.onTriggerEnter += (col) =>
         {//on hit
+            if (!disparo) return;
             var atacable = col.GetComponent<Atacable>();
             if (atacable) {
+                if (equipo==atacable.equipo) return;
                 atacable.RecibirAtaque(daño);
             }
 

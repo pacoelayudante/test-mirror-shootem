@@ -1008,6 +1008,7 @@ MonoBehaviour:
   distanciaDisparo: 40
   cooldown: 0.4
   "da\xF1o": 1
+  amplitudRandom: 0
 --- !u!1 &6883942287005191089
 GameObject:
   m_ObjectHideFlags: 0

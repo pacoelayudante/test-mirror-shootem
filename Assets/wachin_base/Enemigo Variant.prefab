@@ -37,6 +37,10 @@ PrefabInstance:
       propertyPath: m_Color.b
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2380239601825938957, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
+      propertyPath: equipo
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3402987048583700919, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
       propertyPath: m_Name
       value: Enemigo Variant
@@ -104,6 +108,17 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 3402987048583700919, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
   m_PrefabInstance: {fileID: 2154102716517845116}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &4390066596906202737 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2380239601825938957, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
+  m_PrefabInstance: {fileID: 2154102716517845116}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3665155701826005451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bb82230ea3995b42a6168759c4665b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &8836798022547678617 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7441765153396501989, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
@@ -132,6 +147,14 @@ PrefabInstance:
       propertyPath: velocidadDisparo
       value: 17
       objectReference: {fileID: 0}
+    - target: {fileID: 5502286836259317396, guid: 4c51c5c475256c142849742e294b8d27, type: 3}
+      propertyPath: amplitudRandom
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 5502286836259317396, guid: 4c51c5c475256c142849742e294b8d27, type: 3}
+      propertyPath: equipo
+      value: 
+      objectReference: {fileID: 4390066596906202737}
     - target: {fileID: 5908337587185149558, guid: 4c51c5c475256c142849742e294b8d27, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.26
