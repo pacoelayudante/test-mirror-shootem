@@ -144,9 +144,13 @@ public PointEffector2D objetoAtractor;
     }
 
     [ContextMenu("Simular")]
-    void Simular()
+    public void Simular()
     {
         Simular(tSimular, pasosSimular);
+    }
+    public void Simular(bool noprogbar)
+    {
+        Simular(tSimular, pasosSimular, noprogbar);
     }
 
     void ClearEdgesColliders()
@@ -197,8 +201,8 @@ public PointEffector2D objetoAtractor;
 
     void Simular(float t, int repeticiones = 1, bool noprogbar = false)
     {
-        var original = Physics2D.autoSimulation;
-        Physics2D.autoSimulation = false;
+        var original = Physics2D.simulationMode;
+        Physics2D.simulationMode = SimulationMode2D.Script;
 
         if(objetoAtractor) objetoAtractor.gameObject.SetActive(atractorPrendido);
 
@@ -241,7 +245,7 @@ public PointEffector2D objetoAtractor;
             }
         }
 
-        Physics2D.autoSimulation = original;
+        Physics2D.simulationMode = original;
         foreach (var laycuarto in generados)
         {
             if (laycuarto) laycuarto.Simulated = false;

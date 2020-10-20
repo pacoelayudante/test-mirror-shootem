@@ -199,6 +199,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxVel: 10
   acel: 90
+  factorCorre: 1
   wallLayers:
     serializedVersion: 2
     m_Bits: 2048

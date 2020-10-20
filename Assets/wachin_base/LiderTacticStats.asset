@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed0bea7651a1cac42b1311f903affb74, type: 3}
+  m_Name: LiderTacticStats
+  m_EditorClassIdentifier: 
+  reconsiderarPatrullaCada: {x: 10, y: 30}
+  chanceDetenerse: 0.1
+  rangoNuevoPuntoPatrulla: 200
+  samplerRange: 1
+  rangoAutoAsociarPatrulla: 10

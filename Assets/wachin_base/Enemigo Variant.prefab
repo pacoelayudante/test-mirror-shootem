@@ -18,10 +18,13 @@ MonoBehaviour:
   visionBlocker:
     serializedVersion: 2
     m_Bits: 2048
-  maxViewDist: 40
-  distanciaPrudente: 20
+  maxViewDist: 23
+  distanciaPrudente: 15
+  cambiarPosicionCada: {x: 4, y: 9}
+  dispararCada: {x: 0, y: 2}
   fullHp: 3
   muereFx: {fileID: 736680068670989721, guid: f75758d159aa6e640a7cbb6ba2dfcdc4, type: 3}
+  liderazgo: {fileID: 11400000, guid: 4e49bc9600da03b428a1a37a104288d5, type: 2}
 --- !u!1001 &2154102716517845116
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -93,13 +96,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5797295653408594816, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6288318459228852830, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6826840240891757624, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
       propertyPath: maxVel
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
@@ -133,7 +140,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5502286836259317396, guid: 4c51c5c475256c142849742e294b8d27, type: 3}
       propertyPath: cooldown
-      value: 0.7
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 5502286836259317396, guid: 4c51c5c475256c142849742e294b8d27, type: 3}
       propertyPath: disparoPrefab
@@ -149,12 +156,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5502286836259317396, guid: 4c51c5c475256c142849742e294b8d27, type: 3}
       propertyPath: amplitudRandom
-      value: 20
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 5502286836259317396, guid: 4c51c5c475256c142849742e294b8d27, type: 3}
       propertyPath: equipo
       value: 
       objectReference: {fileID: 4390066596906202737}
+    - target: {fileID: 5502286836259317396, guid: 4c51c5c475256c142849742e294b8d27, type: 3}
+      propertyPath: distanciaDisparo
+      value: 70
+      objectReference: {fileID: 0}
     - target: {fileID: 5908337587185149558, guid: 4c51c5c475256c142849742e294b8d27, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.26

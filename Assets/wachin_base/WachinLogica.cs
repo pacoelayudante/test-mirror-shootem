@@ -9,6 +9,7 @@ public class WachinLogica : MonoBehaviour
 {
     public float maxVel = 10;
     public float acel = 50;
+    public float factorCorre = 1.5f;
     public LayerMask wallLayers;
     [AnimatorStringList(AnimatorStringListAttribute.Tipo.Parametros)]
     public string rifleAnimBool;
@@ -22,6 +23,7 @@ public class WachinLogica : MonoBehaviour
         {
             if (Animator && value!=Rifle)
             {
+                Agent.speed = value?maxVel:maxVel*factorCorre;
                 Animator.SetBool(rifleAnimBool, value);
                 Animator.Update(0f);
             }
@@ -56,7 +58,7 @@ public class WachinLogica : MonoBehaviour
     void Start() {
         if (Agent) {
             Agent.updateRotation = false;
-            Agent.speed = maxVel;
+            Agent.speed = maxVel*factorCorre;
             Agent.acceleration = acel;
         }
     }

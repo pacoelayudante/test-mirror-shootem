@@ -188,7 +188,7 @@ public class VinculoEntreSecciones
         }
 
         var lineas = new List<Linea>(detalles.SelectMany(detalle => detalle.lineas).Where(linea => linea.Largo > diametroPuerta));
-        UnityEngine.Assertions.Assert.AreNotEqual(0, lineas.Count);
+        // UnityEngine.Assertions.Assert.AreNotEqual(0, lineas.Count);
 
         for (int c = 0; c < cantPuertas; c++)
         {

@@ -20,7 +20,7 @@ MonoBehaviour:
   abaAlt: 115
   izqAlt: 97
   arrAlt: 119
-  rifleTimeToLower: 3
+  rifleTimeToLower: 1.5
 --- !u!1001 &963353424893196052
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -43,6 +43,14 @@ PrefabInstance:
     - target: {fileID: 1490432158079265854, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
       propertyPath: m_LocalRotation.w
       value: -0.10519947
+      objectReference: {fileID: 0}
+    - target: {fileID: 2047203187505264196, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
+      propertyPath: m_Color.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2047203187505264196, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
+      propertyPath: m_Color.b
+      value: 0.12117076
       objectReference: {fileID: 0}
     - target: {fileID: 2380239601825938957, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
       propertyPath: equipo
@@ -150,6 +158,10 @@ PrefabInstance:
       propertyPath: equipo
       value: 
       objectReference: {fileID: 3194964854138784025}
+    - target: {fileID: 5502286836259317396, guid: 4c51c5c475256c142849742e294b8d27, type: 3}
+      propertyPath: distanciaDisparo
+      value: 30
+      objectReference: {fileID: 0}
     - target: {fileID: 5908337587185149558, guid: 4c51c5c475256c142849742e294b8d27, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.26
