@@ -205,6 +205,35 @@ MonoBehaviour:
     m_Bits: 2048
   rifleAnimBool: rifle
   caminaAnimBool: camina
+  rollAnimTrigger: roll
+  dirAnimInt: orientacion_general
+  rollDurAnimFloat: rollDurationInverse
+  rollDuration: 0.7
+  rollDistance: 7
+  rollCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 1.7518173
+      outSlope: 1.7518173
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.055722892
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0.06497325
+      outSlope: 0.06497325
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.087349415
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   vel: {x: 0, y: 0, z: 0}
   miraHacia: {x: 0, y: 0, z: 0}
 --- !u!195 &375625724217923447

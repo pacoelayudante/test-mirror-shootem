@@ -21,6 +21,10 @@ MonoBehaviour:
   izqAlt: 97
   arrAlt: 119
   rifleTimeToLower: 1.5
+  clipSize: 8
+  reloadDuration: 3
+  mouseAttackButton: 0
+  mouseRollButton: 1
 --- !u!1001 &963353424893196052
 PrefabInstance:
   m_ObjectHideFlags: 0

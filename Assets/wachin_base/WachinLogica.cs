@@ -8,33 +8,46 @@ using Guazu.DrawersCopados;
 public class WachinLogica : MonoBehaviour
 {
     public float maxVel = 10;
-    public float acel = 50;
-    public float factorCorre = 1.5f;
-    public LayerMask wallLayers;
+    [SerializeField] float acel = 50;
+    [SerializeField] float factorCorre = 1.5f;
+    [SerializeField] LayerMask wallLayers;
     [AnimatorStringList(AnimatorStringListAttribute.Tipo.Parametros)]
-    public string rifleAnimBool;
+    [SerializeField] string rifleAnimBool;
     [AnimatorStringList(AnimatorStringListAttribute.Tipo.Parametros)]
-    public string caminaAnimBool;
+    [SerializeField] string caminaAnimBool;
+    [AnimatorStringList(AnimatorStringListAttribute.Tipo.Parametros)]
+    [SerializeField] string rollAnimTrigger;
+    [AnimatorStringList(AnimatorStringListAttribute.Tipo.Parametros)]
+    [SerializeField] string dirAnimInt;
+    [AnimatorStringList(AnimatorStringListAttribute.Tipo.Parametros)]
+    [SerializeField] string rollDurAnimFloat;
+    [SerializeField] float rollDuration = .4f;
+    [SerializeField] float rollDistance = 1.5f;
+    [SerializeField]AnimationCurve rollCurve = AnimationCurve.EaseInOut(0,0,1,1);
 
     public bool Rifle
     {
         get => Animator ? Animator.GetBool(rifleAnimBool) : false;
         set
         {
-            if (Animator && value!=Rifle)
+            if (Animator && value != Rifle)
             {
-                Agent.speed = value?maxVel:maxVel*factorCorre;
+                Agent.speed = value ? maxVel : maxVel * factorCorre;
                 Animator.SetBool(rifleAnimBool, value);
                 Animator.Update(0f);
             }
         }
     }
+    bool _isRolling;
+    public bool IsRolling => _isRolling;
 
     public Vector3 vel;
     Vector3 _posBuscada;
-    public Vector3 PosBuscada {
+    public Vector3 PosBuscada
+    {
         get => _posBuscada;
-        set {
+        set
+        {
             _posBuscada = value;
             if (Agent) Agent.destination = _posBuscada;
         }
@@ -42,12 +55,16 @@ public class WachinLogica : MonoBehaviour
 
     public Vector3 miraHacia = Vector3.zero;
 
+    Coroutine rollCor;
     RaycastHit hit;
     Rigidbody _rigid;
     Rigidbody Rigid => _rigid ? _rigid : _rigid = GetComponent<Rigidbody>();
+    
+    Collider _collider;
+    Collider Collider => _collider ? _collider : _collider = GetComponent<Collider>();
 
     NavMeshAgent _agent;
-    public NavMeshAgent Agent => _agent?_agent:_agent=GetComponent<NavMeshAgent>();
+    public NavMeshAgent Agent => _agent ? _agent : _agent = GetComponent<NavMeshAgent>();
 
     Animator _animator;
     Animator Animator => _animator ? _animator : _animator = GetComponent<Animator>();
@@ -55,10 +72,12 @@ public class WachinLogica : MonoBehaviour
     ItemActivo _itemActivo;
     public ItemActivo ItemActivo => _itemActivo ? _itemActivo : _itemActivo = GetComponentInChildren<ItemActivo>();
 
-    void Start() {
-        if (Agent) {
+    void Start()
+    {
+        if (Agent)
+        {
             Agent.updateRotation = false;
-            Agent.speed = maxVel*factorCorre;
+            Agent.speed = maxVel * factorCorre;
             Agent.acceleration = acel;
         }
     }
@@ -73,6 +92,43 @@ public class WachinLogica : MonoBehaviour
 
         var mira = Vector3.ProjectOnPlane(miraHacia, transform.up);
         transform.LookAt(mira, transform.up);
+    }
+
+    public void Roll(Vector3 dir)
+    {
+        if (IsRolling) return;
+        StartCoroutine(DoRoll(dir));
+    }
+
+    IEnumerator DoRoll(Vector3 dir)
+    {
+        _isRolling = true;
+        if(Collider)Collider.enabled = false;
+        Agent.isStopped = true;
+        Rifle = false;
+        dir.Normalize();
+        var rollT = 0f;
+        var travelledDist = 0f;
+        
+        if (Animator)
+        {
+            Animator.SetTrigger(rollAnimTrigger);
+            Animator.SetInteger(dirAnimInt, (dir.x < 0 ? 1 : 0) + (dir.z < 0 ? 2 : 0));
+            Animator.SetFloat(rollDurAnimFloat, 1f/rollDuration);
+        }
+
+        while (rollT < rollDuration)
+        {
+            var newDist = rollCurve.Evaluate(rollT/rollDuration);
+            Agent.Move(dir*(newDist-travelledDist)*rollDistance);
+            travelledDist = newDist;
+            rollT += Time.deltaTime;
+            yield return null;
+        }
+        _isRolling = false;
+        Agent.isStopped = false ;
+        if(Collider)Collider.enabled = true;
+        Agent.ResetPath();
     }
 
     void FixedUpdate()

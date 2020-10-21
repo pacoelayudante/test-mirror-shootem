@@ -20,7 +20,10 @@ public class Rifle : MonoBehaviour
 
     void Awake()
     {
-        if (ItemActivo) ItemActivo.alActivar += Activar;
+        if (ItemActivo) {
+            ItemActivo.alActivar += Activar;
+            ItemActivo.SetActivableCheck(()=>Time.time >= tSiguienteDisparo);
+        }
     }
     void OnDestroy()
     {
