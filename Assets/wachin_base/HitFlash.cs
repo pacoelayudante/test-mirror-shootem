@@ -5,8 +5,8 @@ using UnityEngine.UI;
 
 public class HitFlash : MonoBehaviour
 {
-    ControlFlechitas _jugadorLocal;
-    ControlFlechitas JugadorLocal => _jugadorLocal?_jugadorLocal:_jugadorLocal=FindObjectOfType<ControlFlechitas>();
+    WachinJugador _jugadorLocal;
+    WachinJugador JugadorLocal => _jugadorLocal?_jugadorLocal:_jugadorLocal=FindObjectOfType<WachinJugador>();
     
     Image _img;
     Image Img => _img?_img:_img=GetComponent<Image>();
@@ -18,8 +18,14 @@ public class HitFlash : MonoBehaviour
             (_att = JugadorLocal.Atacable).AlRecibirAtaque += Flash;
         }
     }
+    void Update() {
+        if (!_att) OnEnable();
+    }
     private void OnDisable() {
-        if (_att != null) _att.AlRecibirAtaque -= Flash;
+        if (_att != null) {
+            _att.AlRecibirAtaque -= Flash;
+            _att = null;
+        }
     }
 
     void Flash(float dmg) {

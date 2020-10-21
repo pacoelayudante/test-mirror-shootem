@@ -53,6 +53,7 @@ public class GenSeccionCuartosRampas : GenSeccionCuartos {
         return primeraPasada;
     }
 
+#if UNITY_EDITOR
     public override void OnDrawGizmosSelected() {
         // base.OnDrawGizmosSelected();
     }
@@ -87,4 +88,5 @@ public class GenSeccionCuartosRampas : GenSeccionCuartos {
             }
         }
     }
+#endif
 }

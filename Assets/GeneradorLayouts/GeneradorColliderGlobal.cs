@@ -17,6 +17,7 @@ public class GeneradorColliderGlobal : MonoBehaviour
     [SerializeField] PolygonCollider2D colliderGlobal;
 
     [SerializeField] bool generateMesh;
+    [SerializeField] bool generarCollider2d = true;
 
     [SerializeField] Mesh generatedMesh;
     [SerializeField] MeshFilter genMeshFilter;
@@ -31,6 +32,7 @@ public class GeneradorColliderGlobal : MonoBehaviour
     }
     public void Generar(List<SeccionDeLayout> secciones, List<VinculoEntreSecciones> vinculos, float diametroPuerta)
     {
+        UnityEngine.Profiling.Profiler.BeginSample("Generando Collider Global");
         if (generateMesh) {
             if (!genMeshFilter) {
                 var go = new GameObject("generated mesh");
@@ -84,8 +86,10 @@ public class GeneradorColliderGlobal : MonoBehaviour
             // tessTechos.AddContour(Vector3ToContour(puertaPath), ContourOrientation.CounterClockwise);
         }
 
+        UnityEngine.Profiling.Profiler.BeginSample("Generando Tesselacion principal");
         tessInterno.Tessellate(WindingRule.Positive, ElementType.BoundaryContours, 8, null);
         tessExterno.Tessellate(WindingRule.Positive, ElementType.BoundaryContours, 8, null);
+        UnityEngine.Profiling.Profiler.EndSample();
 
         if (colliderGlobal)
         {
@@ -95,10 +99,12 @@ public class GeneradorColliderGlobal : MonoBehaviour
 #endif
         }
 
-        colliderGlobal = new GameObject("collider global").AddComponent<PolygonCollider2D>();
-        colliderGlobal.transform.parent = transform;
+        if (generarCollider2d) {
+            colliderGlobal = new GameObject("collider global").AddComponent<PolygonCollider2D>();
+            colliderGlobal.transform.parent = transform;
 
-        colliderGlobal.pathCount = tessExterno.ElementCount+tessInterno.ElementCount;
+            colliderGlobal.pathCount = tessExterno.ElementCount+tessInterno.ElementCount;
+        }
 
         var vertices2 = tessExterno.Vertices.Select(cont => new Vector2(cont.Position.X, cont.Position.Y));
 
@@ -111,7 +117,7 @@ public class GeneradorColliderGlobal : MonoBehaviour
         {
             var baseIndex = tessExterno.Elements[i * 2];
             var count = tessExterno.Elements[i * 2 + 1];
-            colliderGlobal.SetPath(i, vertices2.Skip(baseIndex).Take(count).ToArray());
+            if (generarCollider2d && colliderGlobal) colliderGlobal.SetPath(i, vertices2.Skip(baseIndex).Take(count).ToArray());
 
             for (int v=0; genExterior && v<count; v++) {
                 int v2 = (v+1)%count;
@@ -131,7 +137,7 @@ public class GeneradorColliderGlobal : MonoBehaviour
         {
             var baseIndex = tessInterno.Elements[i * 2];
             var count = tessInterno.Elements[i * 2 + 1];
-            colliderGlobal.SetPath(i+tessExterno.ElementCount, vertices2.Skip(baseIndex).Take(count).ToArray());
+            if (generarCollider2d && colliderGlobal) colliderGlobal.SetPath(i+tessExterno.ElementCount, vertices2.Skip(baseIndex).Take(count).ToArray());
             
             baseIndex += tessExterno.VertexCount*4;
             for (int v=0; genInterior && v<count; v++) {
@@ -145,7 +151,9 @@ public class GeneradorColliderGlobal : MonoBehaviour
             }
         }
         
-        if (generatedMesh) {
+        if (generatedMesh && generateMesh) {
+            UnityEngine.Profiling.Profiler.BeginSample("Produciendo Mesh");
+
             tessPiso.Tessellate(WindingRule.Positive, ElementType.Polygons);
             var meshVerts3 = tessPiso.Vertices.Select(cont=>new Vector3(cont.Position.X, 0f, cont.Position.Y));
             int baseIndex = meshVerts.Count();
@@ -172,7 +180,10 @@ public class GeneradorColliderGlobal : MonoBehaviour
             generatedMesh.triangles = tris.ToArray();
             generatedMesh.RecalculateNormals();
             generatedMesh.RecalculateBounds();
+            
+            UnityEngine.Profiling.Profiler.EndSample();
         }
+        UnityEngine.Profiling.Profiler.EndSample();
     }
 
     public ContourVertex[] Vector3ToContour(Vector3[] vec3list) => vec3list.Select(v => new Vec3(v.x, v.y, v.z)).Select(v => new ContourVertex(v)).ToArray();

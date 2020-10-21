@@ -7,6 +7,7 @@ using UnityEngine.AI;
 public class WachinEnemigo : MonoBehaviour
 {
     static List<WachinEnemigo> wachinEnemigos = new List<WachinEnemigo>();
+    public static int Count => wachinEnemigos.Count;
 
     Atacable _objetivo;
     public LayerMask buscadoEnPatrulla;

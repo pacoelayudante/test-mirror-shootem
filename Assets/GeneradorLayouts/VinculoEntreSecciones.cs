@@ -221,7 +221,7 @@ public class VinculoEntreSecciones
             {
                 if (cuartoX.pegadosFiltrados.Contains(cuartoY))
                 {
-                    UnityEngine.Assertions.Assert.IsTrue(cuartoY.pegadosFiltrados.Contains(cuartoX));
+                    // UnityEngine.Assertions.Assert.IsTrue(cuartoY.pegadosFiltrados.Contains(cuartoX));
                     detalles.Add(new DetalleDeVinculo(cuartoX, cuartoY));
                 }
             }

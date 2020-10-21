@@ -148,6 +148,10 @@ public PointEffector2D objetoAtractor;
     {
         Simular(tSimular, pasosSimular);
     }
+    public void Simular(int pasosSimular, bool noprogbar = false)
+    {
+        Simular(tSimular, pasosSimular, noprogbar);
+    }
     public void Simular(bool noprogbar)
     {
         Simular(tSimular, pasosSimular, noprogbar);

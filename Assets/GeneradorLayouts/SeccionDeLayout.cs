@@ -172,7 +172,6 @@ public class SeccionDeLayout : MonoBehaviour
             vinculo.DrawGizmos();
         }
     }
-#endif
 
     void DrawMuroGizmos()
     {
@@ -198,6 +197,7 @@ public class SeccionDeLayout : MonoBehaviour
         }
         Handles.matrix = Matrix4x4.identity;
     }
+#endif
 
     void ActualizarVinculos()
     {

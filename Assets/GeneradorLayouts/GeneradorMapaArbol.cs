@@ -62,6 +62,7 @@ public class GeneradorMapaArbol : MonoBehaviour, ISerializationCallbackReceiver
     }
     public void OnAfterDeserialize()
     {
+#if UNITY_EDITOR
         EditorApplication.delayCall += () =>
         {
             arbol.Clear();
@@ -77,6 +78,7 @@ public class GeneradorMapaArbol : MonoBehaviour, ISerializationCallbackReceiver
                 vinculo.AddVinculoCadaSeccion();
             }
         };
+#endif
     }
 
     public void Generar()
