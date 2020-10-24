@@ -53,6 +53,15 @@ public class WachinLogica : MonoBehaviour
         }
     }
 
+    public Vector3 MovDir {
+        get => Agent.velocity.normalized;
+        set {
+            if (IsRolling) return;
+            if(Agent.hasPath) Agent.ResetPath();
+            Agent.velocity = value*Agent.speed;
+        }
+    }
+
     public Vector3 miraHacia = Vector3.zero;
 
     Coroutine rollCor;

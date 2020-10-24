@@ -18,41 +18,59 @@ public class LevelGenerator : MonoBehaviour
     public Vector2Int cantGuardiasPorPatrulla = new Vector2Int(3, 6);
     public Vector2Int cantPatrullas = new Vector2Int(9, 15);
 
-    IEnumerator Start()
+    IEnumerator GenerarLayouts(bool renderIntermedio = true)
     {
         generadorLayouts.Generar(true, true, true);
-        for (int i = 0; i < generadorLayouts.pasosSimular/10; i += 50)
+        for (int i = 0; i < generadorLayouts.pasosSimular / 10; i += 50)
         {
             generadorLayouts.Simular(50, noprogbar: true);
-            generadorMapaArbol.Generar();
-            generadorColliderGlobal.Generar();
-            yield return null;
+            if (renderIntermedio)
+            {
+                RenderNivel();
+                yield return null;
+            }
         }
         generadorLayouts.Generar(false, true, true);
-        for (int i = 0; i < generadorLayouts.pasosSimular/10; i += 100)
+        for (int i = 0; i < generadorLayouts.pasosSimular / 10; i += 100)
         {
             generadorLayouts.Simular(100, noprogbar: true);
-            generadorMapaArbol.Generar();
-            generadorColliderGlobal.Generar();
-            yield return null;
+            if (renderIntermedio)
+            {
+                RenderNivel();
+                yield return null;
+            }
         }
         generadorLayouts.Generar(false, true, false);
         for (int i = 0; i < generadorLayouts.pasosSimular; i += 1000)
         {
             generadorLayouts.Simular(1000, noprogbar: true);
-            generadorMapaArbol.Generar();
-            generadorColliderGlobal.Generar();
-            yield return null;
+            if (renderIntermedio)
+            {
+                RenderNivel();
+                yield return null;
+            }
         }
-
-        generadorMapaArbol.Generar();
+    }
+    void RenderNivel(bool actualizarMapaArbol = true)
+    {
+        if (actualizarMapaArbol) generadorMapaArbol.Generar();
         generadorColliderGlobal.Generar();
+    }
 
+    void ActualizarColliderYNavSurface() {
         var mesh = meshCol.sharedMesh;
         meshCol.sharedMesh = null;
         meshCol.sharedMesh = mesh;
 
         surface.BuildNavMesh();
+    }
+
+    IEnumerator Start()
+    {
+        yield return StartCoroutine(GenerarLayouts(true));
+        RenderNivel();
+
+        ActualizarColliderYNavSurface();
 
         if (prefabJugador.gameObject.scene.rootCount > 0)
         {

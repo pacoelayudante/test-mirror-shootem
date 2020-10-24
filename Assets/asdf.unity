@@ -11725,9 +11725,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resetButton: 114
+  escapeButton: 27
   textUI: {fileID: 693233812}
   formatoEnemigosRestantes: 'Enemigos Restantes: {0}'
   resetearCon: Reiniciar Escenario Con '{0}'
+  abortarCon: Abortar Escenario Con '{0}'
 --- !u!1 &667253537
 GameObject:
   m_ObjectHideFlags: 0
@@ -20850,7 +20852,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.16666667
   m_BuildHeightMesh: 0
-  m_NavMeshData: {fileID: 23800000, guid: c7d0dc502f99dcd41bbd0f67625614a0, type: 2}
+  m_NavMeshData: {fileID: 0}
 --- !u!23 &1063876837
 MeshRenderer:
   m_ObjectHideFlags: 0

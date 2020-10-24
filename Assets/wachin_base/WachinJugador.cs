@@ -59,7 +59,8 @@ public class WachinJugador : MonoBehaviour
         if (isAba^isArr) {
             intent += isArr?Vector3.forward:Vector3.back;
         }
-        Wachin.PosBuscada = transform.position+intent*Wachin.maxVel*Time.deltaTime*2f;
+        // Wachin.PosBuscada = transform.position+intent*Wachin.maxVel*Time.deltaTime*2f;
+        Wachin.MovDir = intent;
 
         var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         var plane = new Plane(transform.up, transform.position);

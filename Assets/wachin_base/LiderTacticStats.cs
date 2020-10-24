@@ -22,11 +22,9 @@ public class LiderTacticStats : ScriptableObject
             }
             else {
                 var pos = LayoutEnMundo.PuntoRandomEnLayoutEnMapa();
-                Debug.DrawLine(pos, LayoutEnMundo.TransformPoint(pos.x,0f,pos.y), Color.red, 20f);
 
                 if (NavMesh.SamplePosition(LayoutEnMundo.TransformPoint(pos.x,0f,pos.y),out hit, samplerRange, NavMesh.AllAreas)) {
                     patrulla.destinoPatrulla = hit.position;
-                    Debug.DrawLine(pos, hit.position, Color.green, 20f);
                 }
                 else patrulla.destinoPatrulla = patrulla.PosLider;
             }
