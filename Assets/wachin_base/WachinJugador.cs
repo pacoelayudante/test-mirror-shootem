@@ -74,12 +74,15 @@ public class WachinJugador : NetworkBehaviour
         }
         // Wachin.PosBuscada = transform.position+intent*Wachin.maxVel*Time.deltaTime*2f;
         Wachin.MovDir = intent;
-
-        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        var plane = new Plane(transform.up, transform.position);
-        float enter;
-        if (plane.Raycast(ray, out enter)) {
-            Wachin.MiraHacia = ray.GetPoint(enter);
+        
+        if (Input.mousePosition.x >= 0f && Input.mousePosition.y >= 0f
+            && Input.mousePosition.x >= Screen.width && Input.mousePosition.y >= Screen.height) {
+            var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            var plane = new Plane(transform.up, transform.position);
+            float enter;
+            if (plane.Raycast(ray, out enter)) {
+                Wachin.MiraHacia = ray.GetPoint(enter);
+            }
         }
 
         if (Input.GetMouseButton(mouseAttackButton) && !Wachin.IsRolling) {
