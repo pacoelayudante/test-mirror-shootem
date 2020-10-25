@@ -144,8 +144,8 @@ public class WachinLogica : NetworkBehaviour
 
     void Update()
     {
-        var mira = Vector3.ProjectOnPlane(_mirarHacia, transform.up);
-        transform.LookAt(mira, transform.up);
+        // var mira = Vector3.ProjectOnPlane(_mirarHacia, transform.up);
+        // transform.LookAt(mira, transform.up);
         if (!isServer) return;
 
         if (!IsRolling) Agent.velocity = _movIntent*Agent.speed;
