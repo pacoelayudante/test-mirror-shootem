@@ -107,7 +107,7 @@ public class WachinLogica : NetworkBehaviour
         }
     }
     
-    [SyncVar]
+    [SerializeField, SyncVar]
     Vector3 _mirarHacia = Vector3.zero;
     [Command]
     void CmdMirarHacia(Vector3 value) {
