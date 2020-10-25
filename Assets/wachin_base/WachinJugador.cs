@@ -76,7 +76,7 @@ public class WachinJugador : NetworkBehaviour
         Wachin.MovDir = intent;
         
         if (Input.mousePosition.x >= 0f && Input.mousePosition.y >= 0f
-            && Input.mousePosition.x >= Screen.width && Input.mousePosition.y >= Screen.height) {
+            && Input.mousePosition.x <= Screen.width && Input.mousePosition.y <= Screen.height) {
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             var plane = new Plane(transform.up, transform.position);
             float enter;
