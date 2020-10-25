@@ -104,7 +104,7 @@ public class WachinEnemigo : MonoBehaviour
                 cambiarPosicionCuando = Time.time + Random.Range(cambiarPosicionCada[0], cambiarPosicionCada[1]);
                 offsetDePosDeAtaque = Quaternion.Euler(0f, Random.value * 360f, 0f) * offsetDePosDeAtaque;
             }
-            Wachin.miraHacia = _objetivo.transform.position;
+            Wachin.MiraHacia = _objetivo.transform.position;
 
             var offUp = Wachin.Agent.height * Vector3.up * 0.5f;
             var attPos = _objetivo.transform.position + offUp;
@@ -159,7 +159,7 @@ public class WachinEnemigo : MonoBehaviour
                     }
                     else Wachin.PosBuscada = newPos;
                 }
-                Wachin.miraHacia = Wachin.PosBuscada;
+                Wachin.MiraHacia = Wachin.PosBuscada;
             }
 
             if (Time.time >= cambiarPosicionCuando)

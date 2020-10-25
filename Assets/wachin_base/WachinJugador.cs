@@ -79,7 +79,7 @@ public class WachinJugador : NetworkBehaviour
         var plane = new Plane(transform.up, transform.position);
         float enter;
         if (plane.Raycast(ray, out enter)) {
-            Wachin.miraHacia = ray.GetPoint(enter);
+            Wachin.MiraHacia = ray.GetPoint(enter);
         }
 
         if (Input.GetMouseButton(mouseAttackButton) && !Wachin.IsRolling) {

@@ -99,8 +99,20 @@ public class WachinLogica : NetworkBehaviour
         Agent.velocity = _movIntent*Agent.speed;
     }
 
+    Vector3 _lastSentMirar = Vector3.zero;
+    public Vector3 MiraHacia {
+        get => _mirarHacia;
+        set {
+            if (hasAuthority && _lastSentMirar!=value) CmdMirarHacia(_lastSentMirar = value);
+        }
+    }
+    
     [SyncVar]
-    public Vector3 miraHacia = Vector3.zero;
+    Vector3 _mirarHacia = Vector3.zero;
+    [Command]
+    void CmdMirarHacia(Vector3 value) {
+        _mirarHacia = value;
+    }
 
     Coroutine rollCor;
     RaycastHit hit;
@@ -132,7 +144,7 @@ public class WachinLogica : NetworkBehaviour
 
     void Update()
     {
-        var mira = Vector3.ProjectOnPlane(miraHacia, transform.up);
+        var mira = Vector3.ProjectOnPlane(_mirarHacia, transform.up);
         transform.LookAt(mira, transform.up);
         if (!isServer) return;
 
