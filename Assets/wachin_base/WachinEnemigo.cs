@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.AI;
+using Mirror;
 
-public class WachinEnemigo : MonoBehaviour
+public class WachinEnemigo : NetworkBehaviour
 {
     static List<WachinEnemigo> wachinEnemigos = new List<WachinEnemigo>();
     public static int Count => wachinEnemigos.Count;
@@ -61,6 +62,7 @@ public class WachinEnemigo : MonoBehaviour
         if (_patrulla != null) _patrulla.Remove(this);
     }
 
+    [ServerCallback]
     void Start()
     {
         if (Atacable) Atacable.AlRecibirAtaque += RecibirAtaque;
@@ -124,7 +126,7 @@ public class WachinEnemigo : MonoBehaviour
                 posOfInterest = transform.position + offUp;//shoot from
                 if (!Physics.Linecast(attPos, posOfInterest, out hit, visionBlocker))
                 {
-                    Wachin.ItemActivo.Activar();
+                    // Wachin.ItemActivo.Activar();
                 }
             }
 

@@ -33550,7 +33550,7 @@ MonoBehaviour:
   rondaIniciada: 0
   prefabJugador: {fileID: 6044758492648583980, guid: 279bbf29c383b6d4b953f6b947a70535, type: 3}
   prefabGuardia: {fileID: 4852951883153804356, guid: e47ce0c183f1c9d468291c7b3b77b17c, type: 3}
-  cantGuardiasPorPatrulla: {x: 0, y: 0}
+  cantGuardiasPorPatrulla: {x: 3, y: 6}
   cantPatrullas: {x: 9, y: 15}
 --- !u!114 &1844471200
 MonoBehaviour:
