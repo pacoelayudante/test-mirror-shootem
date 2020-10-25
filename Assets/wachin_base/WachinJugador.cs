@@ -105,4 +105,9 @@ public class WachinJugador : NetworkBehaviour
             Wachin.Rifle = false;
         }
     }
+
+    private void OnDrawGizmosSelected() {
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(Wachin.MiraHacia, .2f);
+    }
 }
