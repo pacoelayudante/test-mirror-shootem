@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3868c7c19f4ccb46b608aef11b82a13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  maxHp: 3
   der: 275
   aba: 274
   izq: 276
@@ -21,8 +24,9 @@ MonoBehaviour:
   izqAlt: 97
   arrAlt: 119
   rifleTimeToLower: 1.5
-  clipSize: 8
+  _clipSize: 8
   reloadDuration: 3
+  _currentBulletCount: 0
   mouseAttackButton: 0
   mouseRollButton: 1
 --- !u!1001 &963353424893196052
@@ -70,15 +74,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4491740277868640107, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.95
+      value: -294.52972
       objectReference: {fileID: 0}
     - target: {fileID: 4491740277868640107, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.000104585364
       objectReference: {fileID: 0}
     - target: {fileID: 4491740277868640107, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -2.66
+      value: 35.809208
       objectReference: {fileID: 0}
     - target: {fileID: 4491740277868640107, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
       propertyPath: m_LocalRotation.x
@@ -120,6 +124,14 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7522937719306209382, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
+      propertyPath: m_AssetId
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8504548953493296394, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
+      propertyPath: animator
+      value: 
+      objectReference: {fileID: 9099786033117891714}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
 --- !u!1 &2479040714273199779 stripped
@@ -216,3 +228,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4c51c5c475256c142849742e294b8d27, type: 3}
+--- !u!95 &9099786033117891714 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 6826840240891757625, guid: 4c51c5c475256c142849742e294b8d27, type: 3}
+  m_PrefabInstance: {fileID: 2374839736234641595}
+  m_PrefabAsset: {fileID: 0}

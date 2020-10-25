@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
-public class ItemActivo : MonoBehaviour
+public class ItemActivo : NetworkBehaviour
 {
     public bool Activable => _activable!=null?_activable.Invoke():true;
     System.Func<bool> _activable;
@@ -13,6 +14,11 @@ public class ItemActivo : MonoBehaviour
     }
 
     public void Activar() {
+        if (hasAuthority) CmdActivar();
+    }
+
+    [Command]
+    void CmdActivar(){
         alActivar?.Invoke();
     }
 }

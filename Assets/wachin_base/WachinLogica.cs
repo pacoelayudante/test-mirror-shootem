@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using Guazu.DrawersCopados;
+using Mirror;
 
 [DisallowMultipleComponent]
-public class WachinLogica : MonoBehaviour
+public class WachinLogica : NetworkBehaviour
 {
     public float maxVel = 10;
     [SerializeField] float acel = 50;
@@ -30,16 +31,40 @@ public class WachinLogica : MonoBehaviour
         get => Animator ? Animator.GetBool(rifleAnimBool) : false;
         set
         {
+            if (hasAuthority) CmdRifleSet(value);
+            // if (Animator && value != Rifle)
+            // {
+            //     Agent.speed = value ? maxVel : maxVel * factorCorre;
+            //     Animator.SetBool(rifleAnimBool, value);
+            //     Animator.Update(0f);
+            // }
+        }
+    }
+
+    [SyncVar,SerializeField]
+    bool _isRolling;
+    public bool IsRolling => _isRolling;
+
+    [Command]
+    void CmdRifleSet(bool value) {
+        Agent.speed = value ? maxVel : maxVel * factorCorre;
+        // RpcRifleSet(value);
+        
             if (Animator && value != Rifle)
             {
                 Agent.speed = value ? maxVel : maxVel * factorCorre;
                 Animator.SetBool(rifleAnimBool, value);
                 Animator.Update(0f);
             }
+    }
+    [ClientRpc]
+    void RpcRifleSet(bool value) {
+        if (Animator && value != Rifle)
+        {
+            Animator.SetBool(rifleAnimBool, value);
+            Animator.Update(0f);
         }
     }
-    bool _isRolling;
-    public bool IsRolling => _isRolling;
 
     public Vector3 vel;
     Vector3 _posBuscada;
@@ -48,20 +73,33 @@ public class WachinLogica : MonoBehaviour
         get => _posBuscada;
         set
         {
+            if (!isServer) return;
             _posBuscada = value;
             if (Agent) Agent.destination = _posBuscada;
         }
     }
 
+    Vector3 _lastSentMovDir = Vector3.zero;
     public Vector3 MovDir {
         get => Agent.velocity.normalized;
         set {
-            if (IsRolling) return;
-            if(Agent.hasPath) Agent.ResetPath();
-            Agent.velocity = value*Agent.speed;
+            if (hasAuthority && _lastSentMovDir!=value) CmdMovDirSet(_lastSentMovDir = value);
+            // if (IsRolling) return;
+            // if(Agent.hasPath) Agent.ResetPath();
+            // Agent.velocity = value*Agent.speed;
         }
     }
 
+    Vector3 _movIntent;
+    [Command]
+    void CmdMovDirSet(Vector3 value) {
+        _movIntent = value;
+        if (IsRolling) return;
+        if(Agent.hasPath) Agent.ResetPath();
+        Agent.velocity = _movIntent*Agent.speed;
+    }
+
+    [SyncVar]
     public Vector3 miraHacia = Vector3.zero;
 
     Coroutine rollCor;
@@ -81,6 +119,7 @@ public class WachinLogica : MonoBehaviour
     ItemActivo _itemActivo;
     public ItemActivo ItemActivo => _itemActivo ? _itemActivo : _itemActivo = GetComponentInChildren<ItemActivo>();
 
+    [ServerCallback]
     void Start()
     {
         if (Agent)
@@ -93,18 +132,25 @@ public class WachinLogica : MonoBehaviour
 
     void Update()
     {
+        var mira = Vector3.ProjectOnPlane(miraHacia, transform.up);
+        transform.LookAt(mira, transform.up);
+        if (!isServer) return;
+
+        if (!IsRolling) Agent.velocity = _movIntent*Agent.speed;
+
         if (Animator)
         {
             if (Rigid) Animator.SetBool(caminaAnimBool, Rigid.velocity.magnitude > 0.1f);
             else if (Agent) Animator.SetBool(caminaAnimBool, Agent.velocity.magnitude > .1f);
         }
-
-        var mira = Vector3.ProjectOnPlane(miraHacia, transform.up);
-        transform.LookAt(mira, transform.up);
     }
 
     public void Roll(Vector3 dir)
     {
+        if(hasAuthority) CmdRoll(dir);
+    }
+    [Command]
+    void CmdRoll(Vector3 dir) {
         if (IsRolling) return;
         StartCoroutine(DoRoll(dir));
     }
@@ -140,7 +186,8 @@ public class WachinLogica : MonoBehaviour
         Agent.ResetPath();
     }
 
-    void FixedUpdate()
+    [ServerCallback]
+    void FixedUpdateX()
     {
         if (!Rigid) return;
         var dt = Time.inFixedTimeStep ? Time.fixedDeltaTime : Time.deltaTime;

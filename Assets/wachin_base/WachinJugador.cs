@@ -1,19 +1,24 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
 [DisallowMultipleComponent]
-public class WachinJugador : MonoBehaviour
+public class WachinJugador : NetworkBehaviour
 {
+    public static WachinJugador local;
+
     public float maxHp = 3;
     public KeyCode der = KeyCode.RightArrow,aba = KeyCode.DownArrow,izq = KeyCode.LeftArrow,arr = KeyCode.UpArrow;
     public KeyCode derAlt = KeyCode.D,abaAlt = KeyCode.S,izqAlt = KeyCode.A,arrAlt = KeyCode.W;
     public float rifleTimeToLower = 3f;
     float currentRifleLowerTime = 0;
 
+    [SyncVar]
     [SerializeField] int _clipSize = 8;
     [SerializeField] float reloadDuration = 1f;
-    int _currentBulletCount;
+    
+    [SerializeField, SyncVar] int _currentBulletCount;
     public int CurrentBulletCount => _currentBulletCount;
     public int ClipSize => _clipSize;
     float _reloadingMark;
@@ -29,14 +34,20 @@ public class WachinJugador : MonoBehaviour
     Atacable _atacable;
     public Atacable Atacable => _atacable ? _atacable : _atacable = GetComponent<Atacable>();
 
-    void Start() {
+    [ServerCallback]
+    void Awake() {
         _currentBulletCount = _clipSize;
         if(Atacable)Atacable.AlRecibirAtaque += AlRecibirAtaque;
     }
 
+    void Start() {
+        if (hasAuthority) local = this;
+    }
+
     void AlRecibirAtaque(float dmg) {
         if (Atacable.dañoAcumulado >= maxHp) {
-            Destroy(gameObject);
+            // Destroy(gameObject);
+            NetworkServer.Destroy(gameObject);
         }
     }
 
@@ -48,6 +59,8 @@ public class WachinJugador : MonoBehaviour
     }
 
     void Update() {
+        if (!hasAuthority) return;
+
         var intent = Vector3.zero;
         var isDer = Input.GetKey(der) || Input.GetKey(derAlt);
         var isIzq = Input.GetKey(izq) || Input.GetKey(izqAlt);
@@ -74,7 +87,7 @@ public class WachinJugador : MonoBehaviour
                 if (Wachin.ItemActivo.Activable) {
                     _currentBulletCount--;
                     Wachin.Rifle = true;
-                    Wachin.ItemActivo.Activar();
+                    // Wachin.ItemActivo.Activar();
                     currentRifleLowerTime = Time.time+rifleTimeToLower;
                 }
             }

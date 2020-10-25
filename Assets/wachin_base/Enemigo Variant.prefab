@@ -108,6 +108,14 @@ PrefabInstance:
       propertyPath: maxVel
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 7522937719306209382, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
+      propertyPath: m_AssetId
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8504548953493296394, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
+      propertyPath: animator
+      value: 
+      objectReference: {fileID: 4264860114558180032}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
 --- !u!1 &3665155701826005451 stripped
@@ -216,3 +224,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4c51c5c475256c142849742e294b8d27, type: 3}
+--- !u!95 &4264860114558180032 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 6826840240891757625, guid: 4c51c5c475256c142849742e294b8d27, type: 3}
+  m_PrefabInstance: {fileID: 7318943865066151673}
+  m_PrefabAsset: {fileID: 0}

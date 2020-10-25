@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/FlujoDeJuego/mirrormenu.unity
+    guid: 2ba92d4ad99b47141a3615003f5d3788
+  - enabled: 1
     path: Assets/asdf.unity
     guid: 00f2bc4aea277954380557620882cc42
   m_configObjects: {}

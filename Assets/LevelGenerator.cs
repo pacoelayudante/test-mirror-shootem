@@ -18,7 +18,8 @@ public class LevelGenerator : MonoBehaviour
     public Vector2Int cantGuardiasPorPatrulla = new Vector2Int(3, 6);
     public Vector2Int cantPatrullas = new Vector2Int(9, 15);
 
-    IEnumerator GenerarLayouts(bool renderIntermedio = true)
+    public Coroutine GenerarLayout(bool renderIntermedio = true) => StartCoroutine(GenerarLayoutsRutina(renderIntermedio));
+    IEnumerator GenerarLayoutsRutina(bool renderIntermedio = true)
     {
         generadorLayouts.Generar(true, true, true);
         for (int i = 0; i < generadorLayouts.pasosSimular / 10; i += 50)
@@ -51,13 +52,13 @@ public class LevelGenerator : MonoBehaviour
             }
         }
     }
-    void RenderNivel(bool actualizarMapaArbol = true)
+    public void RenderNivel(bool actualizarMapaArbol = true)
     {
         if (actualizarMapaArbol) generadorMapaArbol.Generar();
         generadorColliderGlobal.Generar();
     }
 
-    void ActualizarColliderYNavSurface() {
+    public void ActualizarColliderYNavSurface() {
         var mesh = meshCol.sharedMesh;
         meshCol.sharedMesh = null;
         meshCol.sharedMesh = mesh;
@@ -67,7 +68,7 @@ public class LevelGenerator : MonoBehaviour
 
     IEnumerator Start()
     {
-        yield return StartCoroutine(GenerarLayouts(true));
+        yield return StartCoroutine(GenerarLayoutsRutina(true));
         RenderNivel();
 
         ActualizarColliderYNavSurface();
