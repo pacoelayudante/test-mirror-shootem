@@ -7,7 +7,7 @@ using System.Linq;
 public class DatosJugadorCanvas : MonoBehaviour
 {
     WachinJugador _jugadorLocal;
-    WachinJugador JugadorLocal => _jugadorLocal ? _jugadorLocal : _jugadorLocal = FindObjectOfType<WachinJugador>();
+    WachinJugador JugadorLocal => WachinJugador.local;
 
     RectTransform RectTransform => (RectTransform)transform;
 

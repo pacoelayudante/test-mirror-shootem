@@ -6,34 +6,48 @@ using UnityEngine.UI;
 public class HitFlash : MonoBehaviour
 {
     WachinJugador _jugadorLocal;
-    WachinJugador JugadorLocal => _jugadorLocal?_jugadorLocal:_jugadorLocal=FindObjectOfType<WachinJugador>();
-    
+    WachinJugador JugadorLocal => WachinJugador.local;
+
     Image _img;
-    Image Img => _img?_img:_img=GetComponent<Image>();
+    Image Img => _img ? _img : _img = GetComponent<Image>();
 
     Atacable _att;
 
-    private void OnEnable() {
-        if (JugadorLocal && JugadorLocal.Atacable) {
-            (_att = JugadorLocal.Atacable).AlRecibirAtaque += Flash;
-        }
+    private void OnEnable()
+    {
+        StartCoroutine(GameUtils.EsperarTrueLuegoHacerCallback(
+            () => JugadorLocal,
+            () =>
+            {
+                if (JugadorLocal && JugadorLocal.Atacable)
+                {
+                    (_att = JugadorLocal.Atacable).AlRecibirAtaque += Flash;
+                }
+            }
+        ));
     }
-    void Update() {
+    void Update()
+    {
         if (!_att) OnEnable();
     }
-    private void OnDisable() {
-        if (_att != null) {
+    private void OnDisable()
+    {
+        if (_att != null)
+        {
             _att.AlRecibirAtaque -= Flash;
             _att = null;
         }
     }
 
-    void Flash(float dmg) {
-        if (dmg > 0f) {
+    void Flash(float dmg)
+    {
+        if (dmg > 0f)
+        {
             StartCoroutine(FlashCo());
         }
     }
-    IEnumerator FlashCo() {
+    IEnumerator FlashCo()
+    {
         Img.enabled = true;
         yield return null;
         Img.enabled = false;
