@@ -37,7 +37,7 @@ public class ControlMirror : MonoBehaviour
 
     private void Update() {
         serverMenu.SetActive(!NetworkManager.singleton.isNetworkActive);
-        lobbyMenu.SetActive(!onGame && NetworkManager.singleton.isNetworkActive && !WachinJugador.local);
+        lobbyMenu.SetActive(!onGame && NetworkManager.singleton.isNetworkActive && !RondaActual.actual);
     }
 
     public void Jugar() {

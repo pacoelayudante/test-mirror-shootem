@@ -8,27 +8,34 @@ public class Atacable : NetworkBehaviour
 {
     public int equipo = -1;
     public static List<Atacable> atacables = new List<Atacable>();
-    
+
     public Vector3 Pos => transform.position;
 
     [SyncVar]
     public float dañoAcumulado = 0f;
     public event System.Action<float> AlRecibirAtaque;
 
-    [Server]
-    public void RecibirAtaque(float daño) {
-        if (hasAuthority) CmdRecibirAtaque(daño);
-    }
-    [Command]
-    void CmdRecibirAtaque(float daño) {
+    public void RecibirAtaque(float daño)
+    {
         dañoAcumulado += daño;
         AlRecibirAtaque?.Invoke(daño);
     }
+    // [Server]
+    // public void RecibirAtaque(float daño) {
+    //     if (hasAuthority) CmdRecibirAtaque(daño);
+    // }
+    // [Command]
+    // void CmdRecibirAtaque(float daño) {
+    //     dañoAcumulado += daño;
+    //     AlRecibirAtaque?.Invoke(daño);
+    // }
 
-    private void OnEnable() {
+    private void OnEnable()
+    {
         atacables.Add(this);
     }
-    private void OnDisable() {
+    private void OnDisable()
+    {
         atacables.Remove(this);
     }
 }

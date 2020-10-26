@@ -7,6 +7,8 @@ using UnityEngine.AI;
 
 public class RondaActual : NetworkBehaviour
 {
+    public static RondaActual actual;
+
     [SerializeField] CinemachineVirtualCamera camInicial, followCam;
     [SerializeField] NavMeshSurface surface;
     [SerializeField] MeshCollider meshCol;
@@ -22,8 +24,11 @@ public class RondaActual : NetworkBehaviour
     public Vector2Int cantGuardiasPorPatrulla = new Vector2Int(3, 6);
     public Vector2Int cantPatrullas = new Vector2Int(9, 15);
 
+    Vector3 posInicial;
+
     void Start()
     {
+        actual = this;
         if (isServer)
         {
             PrepararRonda();
@@ -32,6 +37,9 @@ public class RondaActual : NetworkBehaviour
         {
             camInicial.enabled = false;
         }
+    }
+    void OnDestroy() {
+        if (actual == this) actual = null;
     }
 
     void PrepararRonda()
@@ -76,9 +84,10 @@ public class RondaActual : NetworkBehaviour
 
     void GenerarJugadoresIniciales()
     {
+        posInicial = LayoutEnMundo.PuntoRandomEnLayout();
         foreach (var jug in JugadorMirror.jugadores)
         {
-            var pj = Instantiate(prefabJugador, LayoutEnMundo.PuntoRandomEnLayout(), Quaternion.identity);
+            var pj = Instantiate(prefabJugador, posInicial, Quaternion.identity);
             prefabJugador.gameObject.SetActive(true);
             prefabJugador.Agent.Warp(pj.transform.position);
             NetworkServer.Spawn(pj.gameObject, jug.gameObject);

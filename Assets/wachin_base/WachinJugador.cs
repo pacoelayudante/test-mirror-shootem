@@ -29,6 +29,18 @@ public class WachinJugador : NetworkBehaviour
 
     WachinLogica _wachin;
     WachinLogica Wachin => _wachin?_wachin:_wachin = GetComponent<WachinLogica>();
+
+    bool shotIntent;
+    [Command]
+    void CmdShotIntent(bool value) {
+        shotIntent = value;
+    }
+
+    bool rollIntent;
+    [Command]
+    void CmdRollIntent(bool value) {
+        rollIntent = value;
+    }
     
     public float HPActual => maxHp-(Atacable?Atacable.dañoAcumulado:0);
     Atacable _atacable;
@@ -46,8 +58,8 @@ public class WachinJugador : NetworkBehaviour
 
     void AlRecibirAtaque(float dmg) {
         if (Atacable.dañoAcumulado >= maxHp) {
-            // Destroy(gameObject);
-            NetworkServer.Destroy(gameObject);
+            Destroy(gameObject);
+            // NetworkServer.Destroy(gameObject);
         }
     }
 
@@ -59,7 +71,7 @@ public class WachinJugador : NetworkBehaviour
     }
 
     void Update() {
-        if (!hasAuthority) return;
+        if (hasAuthority) {
 
         var intent = Vector3.zero;
         var isDer = Input.GetKey(der) || Input.GetKey(derAlt);
@@ -85,12 +97,21 @@ public class WachinJugador : NetworkBehaviour
             }
         }
 
-        if (Input.GetMouseButton(mouseAttackButton) && !Wachin.IsRolling) {
+        var shotIntentNow = Input.GetMouseButton(mouseAttackButton);
+        if (shotIntentNow != shotIntent) CmdShotIntent(shotIntent = shotIntentNow);
+        
+        var rollIntentNow = Input.GetMouseButton(mouseRollButton);
+        if (rollIntentNow != rollIntent) CmdRollIntent(rollIntent = rollIntentNow);
+    }
+
+        if (!isServer) return;
+
+        if (shotIntent && !Wachin.IsRolling) {
             if (_currentBulletCount > 0) {
                 if (Wachin.ItemActivo.Activable) {
                     _currentBulletCount--;
                     Wachin.Rifle = true;
-                    // Wachin.ItemActivo.Activar();
+                    Wachin.ItemActivo.Activar();
                     currentRifleLowerTime = Time.time+rifleTimeToLower;
                 }
             }
@@ -98,11 +119,27 @@ public class WachinJugador : NetworkBehaviour
                 StartCoroutine(Reload());
             }
         }
-        if (Input.GetMouseButton(mouseRollButton) && !Wachin.IsRolling && intent!=Vector3.zero) {
-            Wachin.Roll(intent);
+        if (rollIntent && !Wachin.IsRolling && Wachin.MovDir!=Vector3.zero) {
+            Wachin.Roll(Wachin.MovDir);
         }
         if (Wachin.Rifle && Time.time > currentRifleLowerTime) {
             Wachin.Rifle = false;
+        }
+    }
+
+    [Command]
+    void CmdActivarItem() {
+        if (Wachin.IsRolling) return;
+        if (_currentBulletCount > 0) {
+            if (Wachin.ItemActivo.Activable) {
+                _currentBulletCount--;
+                Wachin.Rifle = true;
+                Wachin.ItemActivo.Activar();
+                currentRifleLowerTime = Time.time+rifleTimeToLower;
+            }
+        }
+        else if (!IsReloading) {
+            StartCoroutine(Reload());
         }
     }
 

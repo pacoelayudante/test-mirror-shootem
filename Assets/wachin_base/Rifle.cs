@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+// using Mirror;
 
-public class Rifle : MonoBehaviour
+// public class Rifle : NetworkBehaviour
+ public class Rifle : MonoBehaviour
 {
     public Equipo equipo;
     public Transform salidaDisparo;
@@ -39,10 +41,12 @@ public class Rifle : MonoBehaviour
         var disparo = Instantiate(disparoPrefab, salidaDisparo.position, rotacionRandom * salidaDisparo.rotation);
         disparo.Velocidad = disparo.transform.forward * velocidadDisparo;
         disparo.StartCoroutine(AutoDestruirDisparo(disparo, distanciaDisparo / velocidadDisparo));
+        Mirror.NetworkServer.Spawn(disparo.gameObject);
 
         var vfx = Instantiate(vfxPrefab, salidaDisparo.position, salidaDisparo.rotation);
-        vfx.ColorFade(fadeFrom: false);
+        // vfx.ColorFade(fadeFrom: false);
         Destroy(vfx.gameObject, vfx.fadeTimeDefault);
+        Mirror.NetworkServer.Spawn(vfx.gameObject);
     }
 
     IEnumerator AutoDestruirDisparo(Disparo disparo, float t)
@@ -57,8 +61,9 @@ public class Rifle : MonoBehaviour
             }
 
             var vfx = Instantiate(vfxPrefab, disparo.transform.position, Quaternion.Euler(0f, 180f, 0f) * disparo.transform.rotation);
-            vfx.ColorFade(fadeFrom: false);
+            // vfx.ColorFade(fadeFrom: false);
             Destroy(vfx.gameObject, vfx.fadeTimeDefault);
+            Mirror.NetworkServer.Spawn(vfx.gameObject);
             Destroy(disparo.gameObject);
         };
         yield return new WaitForSeconds(t);

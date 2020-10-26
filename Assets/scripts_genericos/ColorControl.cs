@@ -6,7 +6,9 @@ using UnityEngine;
 public class ColorControl : MonoBehaviour
 {
     Dictionary<SpriteRenderer, Color> initialColors = new Dictionary<SpriteRenderer, Color>();
-    public bool startWithFadeFrom = true;
+    public enum InitialFade {None, FadeFromDefault, FadeToDefault};
+    // public bool startWithFadeFrom = true;
+    public InitialFade initialFade = InitialFade.FadeToDefault;
     public float fadeTimeDefault = 0.5f;
     public Color colorFadeDefault = Color.black;
     public float flashTimeDefault = 0.2f;
@@ -21,10 +23,11 @@ public class ColorControl : MonoBehaviour
     }
     void Start()
     {
-        if (startWithFadeFrom)
-        {
-            ColorFade(fadeFrom: true);
-        }
+        if (initialFade != InitialFade.None) ColorFade(fadeFrom: initialFade==InitialFade.FadeFromDefault);
+        // if (startWithFadeFrom)
+        // {
+        //     ColorFade(fadeFrom: true);
+        // }
     }
 
     public void Multiply(Color c)

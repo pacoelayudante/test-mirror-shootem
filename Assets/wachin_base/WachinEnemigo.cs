@@ -27,6 +27,8 @@ public class WachinEnemigo : NetworkBehaviour
     Atacable _atacable;
     public Atacable Atacable => _atacable ? _atacable : _atacable = GetComponent<Atacable>();
 
+    Coroutine rutina;
+
     RaycastHit hit;
     Patrulla _patrulla;
     Patrulla Patrulla
@@ -66,7 +68,12 @@ public class WachinEnemigo : NetworkBehaviour
     void Start()
     {
         if (Atacable) Atacable.AlRecibirAtaque += RecibirAtaque;
-        StartCoroutine(Rutina());
+    }
+    void OnEnable() {
+        rutina = StartCoroutine(Rutina());
+    }
+    void OnDisable() {
+        StopCoroutine(rutina);
     }
 
     void RecibirAtaque(float dmg)

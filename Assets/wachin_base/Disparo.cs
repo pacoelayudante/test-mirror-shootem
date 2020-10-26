@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
-public class Disparo : MonoBehaviour
+public class Disparo : NetworkBehaviour
 {
     public event System.Action<Collision> onCollisionEnter;
     public event System.Action<Collider> onTriggerEnter;
@@ -16,9 +17,11 @@ public class Disparo : MonoBehaviour
         set => _vel = Rigid?Rigid.velocity=value:value;
     }
 
+    [ServerCallback]
     private void OnCollisionEnter(Collision other) {
         onCollisionEnter?.Invoke(other);
     }
+    [ServerCallback]
     private void OnTriggerEnter(Collider other) {
         onTriggerEnter?.Invoke(other);        
     }

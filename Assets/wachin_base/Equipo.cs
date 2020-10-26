@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
-public class Equipo : MonoBehaviour
+public class Equipo : NetworkBehaviour
 {
+    [SyncVar]
     public int equipo = -1;
 
     public static bool operator ==(Equipo a, Equipo b) => (object)a!=null&&(object)b!=null&&a.equipo!=-1&&b.equipo!=-1&&a.equipo==b.equipo;
@@ -14,6 +16,7 @@ public class Equipo : MonoBehaviour
     public override int GetHashCode()=>equipo.GetHashCode();
     public override bool Equals(object o)=>base.Equals(o);
 
+    [ServerCallback]
     void Awake() {
         var atacable = GetComponent<Atacable>();
         if (atacable) atacable.equipo = equipo;

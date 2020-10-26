@@ -173,6 +173,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4168611093807676385}
+  - component: {fileID: -3973386848217476281}
   - component: {fileID: 8888099084229379135}
   - component: {fileID: 4670693320760718735}
   m_Layer: 0
@@ -199,6 +200,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-3973386848217476281
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1275506307153848705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  serverOnly: 0
+  m_AssetId: 
+  hasSpawned: 0
 --- !u!114 &8888099084229379135
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -211,7 +228,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c3948ca3506bac4ea215e8d7aa4a4b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startWithFadeFrom: 0
+  initialFade: 2
   fadeTimeDefault: 0.1
   colorFadeDefault: {r: 1, g: 1, b: 1, a: 0}
   flashTimeDefault: 0.2

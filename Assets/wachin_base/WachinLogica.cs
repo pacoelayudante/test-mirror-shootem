@@ -147,15 +147,15 @@ public class WachinLogica : NetworkBehaviour
         var mira = Vector3.ProjectOnPlane(_mirarHacia, transform.up);
         mira.y = transform.position.y;
         transform.LookAt(mira, transform.up);
-        
+
         if (!isServer) return;
 
-        if (!IsRolling) Agent.velocity = _movIntent*Agent.speed;
+        if (!IsRolling && !Agent.hasPath) Agent.velocity = _movIntent*Agent.speed;
 
         if (Animator)
         {
-            if (Rigid) Animator.SetBool(caminaAnimBool, Rigid.velocity.magnitude > 0.1f);
-            else if (Agent) Animator.SetBool(caminaAnimBool, Agent.velocity.magnitude > .1f);
+            if (Rigid) Animator.SetBool(caminaAnimBool, Rigid.velocity.magnitude > 0.2f);
+            else if (Agent) Animator.SetBool(caminaAnimBool, Agent.velocity.magnitude > .2f);
         }
     }
 
