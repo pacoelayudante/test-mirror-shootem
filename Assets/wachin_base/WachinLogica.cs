@@ -164,8 +164,8 @@ public class WachinLogica : NetworkBehaviour
         if(hasAuthority) CmdRoll(dir);
     }
     [Command]
-    void CmdRoll(Vector3 dir) {
-        if (IsRolling) return;
+    public void CmdRoll(Vector3 dir) {
+        if (IsRolling && dir != Vector3.zero) return;
         StartCoroutine(DoRoll(dir));
     }
 
