@@ -103,7 +103,10 @@ public class WachinLogica : NetworkBehaviour
     public Vector3 MiraHacia {
         get => _mirarHacia;
         set {
-            if (hasAuthority && _lastSentMirar!=value) CmdMirarHacia(_lastSentMirar = value);
+            if (hasAuthority && _lastSentMirar!=value) {
+                CmdMirarHacia(_lastSentMirar = value);
+            }
+            else if (isServer) _mirarHacia = value;
         }
     }
     

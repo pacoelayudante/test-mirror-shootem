@@ -21,6 +21,7 @@ public class WachinJugador : NetworkBehaviour
     [SerializeField, SyncVar] int _currentBulletCount;
     public int CurrentBulletCount => _currentBulletCount;
     public int ClipSize => _clipSize;
+    [SerializeField, SyncVar]
     float _reloadingMark;
     public bool IsReloading => Time.time < _reloadingMark;
     public float ReloadingProgress => 1f - (_reloadingMark - Time.time) / reloadDuration;

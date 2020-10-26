@@ -7,7 +7,8 @@ using UnityEngine.UI;
 public class MiraJugadorCanvas : MonoBehaviour
 {
     WachinJugador _jugadorLocal;
-    WachinJugador JugadorLocal => _jugadorLocal ? _jugadorLocal : _jugadorLocal = FindObjectOfType<WachinJugador>();
+    // WachinJugador JugadorLocal => _jugadorLocal ? _jugadorLocal : _jugadorLocal = FindObjectOfType<WachinJugador>();
+    WachinJugador JugadorLocal => WachinJugador.local;
 
     RectTransform RectTransform => (RectTransform)transform;
 

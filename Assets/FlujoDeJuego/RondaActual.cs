@@ -24,20 +24,22 @@ public class RondaActual : NetworkBehaviour
     public WachinLogica prefabGuardia;
     public Vector2Int cantGuardiasPorPatrulla = new Vector2Int(3, 6);
     public Vector2Int cantPatrullas = new Vector2Int(9, 15);
+    public float distMinimaGuardias = 30f;
 
     Vector3 posInicial;
 
-    public class LevelGeneratorData : NetworkMessage {
-        public Vector2[] posGrandes,tamGrandes,posPeques,tamPeques,puertas;
+    public class LevelGeneratorData : NetworkMessage
+    {
+        public Vector2[] posGrandes, tamGrandes, posPeques, tamPeques, puertas;
     }
-    public class LevelDataRequest : NetworkMessage {}
+    public class LevelDataRequest : NetworkMessage { }
 
     void Start()
     {
         actual = this;
         if (isServer)
         {
-            NetworkServer.RegisterHandler<LevelDataRequest>(LevelDataRequestHandler,false);
+            NetworkServer.RegisterHandler<LevelDataRequest>(LevelDataRequestHandler, false);
 
             PrepararRonda();
         }
@@ -46,7 +48,8 @@ public class RondaActual : NetworkBehaviour
             NetworkClient.RegisterHandler<LevelGeneratorData>(LevelDataProcessor);
         }
     }
-    void OnDestroy() {
+    void OnDestroy()
+    {
         if (actual == this) actual = null;
     }
 
@@ -60,39 +63,42 @@ public class RondaActual : NetworkBehaviour
         levelGenerator.RenderNivel(true);
         // levelGenerator.ActualizarColliderYNavSurface();
 
-        var agrupados = levelGenerator.generadorLayouts.generados.GroupBy(cuarto=>cuarto.categoria);
-        var grandes = agrupados.FirstOrDefault(grupo=>grupo.Key==LayoutCuarto.Categoria.Grande);
-        var peques = agrupados.FirstOrDefault(grupo=>grupo.Key==LayoutCuarto.Categoria.Peque);
-        var data = new LevelGeneratorData(){
-            posGrandes = grandes.Select(cada=>(Vector2)cada.BoxCol.transform.TransformPoint(cada.BoxCol.offset)).ToArray(),
-            tamGrandes = grandes.Select(cada=>(Vector2)cada.BoxCol.transform.TransformVector(cada.BoxCol.size)).ToArray(),
-            posPeques = peques.Select(cada=>(Vector2)cada.BoxCol.transform.TransformPoint(cada.BoxCol.offset)).ToArray(),
-            tamPeques = peques.Select(cada=>(Vector2)cada.BoxCol.transform.TransformVector(cada.BoxCol.size)).ToArray(),
-            puertas = levelGenerator.generadorMapaArbol.vinculos.SelectMany(vinc=>vinc.puertas).ToArray()
+        var agrupados = levelGenerator.generadorLayouts.generados.GroupBy(cuarto => cuarto.categoria);
+        var grandes = agrupados.FirstOrDefault(grupo => grupo.Key == LayoutCuarto.Categoria.Grande);
+        var peques = agrupados.FirstOrDefault(grupo => grupo.Key == LayoutCuarto.Categoria.Peque);
+        var data = new LevelGeneratorData()
+        {
+            posGrandes = grandes.Select(cada => (Vector2)cada.BoxCol.transform.TransformPoint(cada.BoxCol.offset)).ToArray(),
+            tamGrandes = grandes.Select(cada => (Vector2)cada.BoxCol.transform.TransformVector(cada.BoxCol.size)).ToArray(),
+            posPeques = peques.Select(cada => (Vector2)cada.BoxCol.transform.TransformPoint(cada.BoxCol.offset)).ToArray(),
+            tamPeques = peques.Select(cada => (Vector2)cada.BoxCol.transform.TransformVector(cada.BoxCol.size)).ToArray(),
+            puertas = levelGenerator.generadorMapaArbol.vinculos.SelectMany(vinc => vinc.puertas).ToArray()
         };
         levelGenerator.generadorColliderGlobal.GenerarAMano(
             data.posGrandes, data.tamGrandes, data.posPeques, data.tamPeques, data.puertas
         );
         levelGenerator.ActualizarColliderYNavSurface();
 
-        GenerarPatrullas();
         GenerarJugadoresIniciales();
+        GenerarPatrullas();
 
         rondaIniciada = true;
     }
 
     [Server]
-    void LevelDataRequestHandler(NetworkConnection jug, LevelDataRequest request) {
+    void LevelDataRequestHandler(NetworkConnection jug, LevelDataRequest request)
+    {
         Debug.Log("level data being requested");
-        var agrupados = levelGenerator.generadorLayouts.generados.GroupBy(cuarto=>cuarto.categoria);
-        var grandes = agrupados.FirstOrDefault(grupo=>grupo.Key==LayoutCuarto.Categoria.Grande);
-        var peques = agrupados.FirstOrDefault(grupo=>grupo.Key==LayoutCuarto.Categoria.Peque);
-        var data = new LevelGeneratorData(){
-            posGrandes = grandes.Select(cada=>(Vector2)cada.BoxCol.transform.TransformPoint(cada.BoxCol.offset)).ToArray(),
-            tamGrandes = grandes.Select(cada=>(Vector2)cada.BoxCol.transform.TransformVector(cada.BoxCol.size)).ToArray(),
-            posPeques = peques.Select(cada=>(Vector2)cada.BoxCol.transform.TransformPoint(cada.BoxCol.offset)).ToArray(),
-            tamPeques = peques.Select(cada=>(Vector2)cada.BoxCol.transform.TransformVector(cada.BoxCol.size)).ToArray(),
-            puertas = levelGenerator.generadorMapaArbol.vinculos.SelectMany(vinc=>vinc.puertas).ToArray()
+        var agrupados = levelGenerator.generadorLayouts.generados.GroupBy(cuarto => cuarto.categoria);
+        var grandes = agrupados.FirstOrDefault(grupo => grupo.Key == LayoutCuarto.Categoria.Grande);
+        var peques = agrupados.FirstOrDefault(grupo => grupo.Key == LayoutCuarto.Categoria.Peque);
+        var data = new LevelGeneratorData()
+        {
+            posGrandes = grandes.Select(cada => (Vector2)cada.BoxCol.transform.TransformPoint(cada.BoxCol.offset)).ToArray(),
+            tamGrandes = grandes.Select(cada => (Vector2)cada.BoxCol.transform.TransformVector(cada.BoxCol.size)).ToArray(),
+            posPeques = peques.Select(cada => (Vector2)cada.BoxCol.transform.TransformPoint(cada.BoxCol.offset)).ToArray(),
+            tamPeques = peques.Select(cada => (Vector2)cada.BoxCol.transform.TransformVector(cada.BoxCol.size)).ToArray(),
+            puertas = levelGenerator.generadorMapaArbol.vinculos.SelectMany(vinc => vinc.puertas).ToArray()
         };
 
         jug.Send(data);
@@ -113,8 +119,14 @@ public class RondaActual : NetworkBehaviour
         var numPatrullas = Random.Range(cantPatrullas[0], cantPatrullas[1]);
         for (int i = 0; i < numPatrullas; i++)
         {
-            var guardias = Random.Range(cantGuardiasPorPatrulla[0], cantGuardiasPorPatrulla[1]);
             var pos = LayoutEnMundo.PuntoRandomEnLayout();
+            if (Vector3.Distance(posInicial,pos) < distMinimaGuardias) {
+                i--;
+                continue;
+            }
+
+            var guardias = Random.Range(cantGuardiasPorPatrulla[0], cantGuardiasPorPatrulla[1]);
+
             for (int g = 0; g < guardias; g++)
             {
                 var guardia = Instantiate(prefabGuardia, pos, Quaternion.identity);
@@ -135,8 +147,9 @@ public class RondaActual : NetworkBehaviour
 
             jugadoresIniciados.Add(jug, pj);
 
-            RpcIniciarParaJugadores();
         }
+
+        RpcIniciarParaJugadores();
     }
 
     [ClientRpc]
@@ -148,7 +161,8 @@ public class RondaActual : NetworkBehaviour
             {
                 followCam.Follow = WachinJugador.local.transform;
                 camInicial.enabled = false;
-                if(!isServer){
+                if (!isServer)
+                {
                     Debug.Log("requesting level data");
                     NetworkClient.Send(new LevelDataRequest());
                 }
@@ -157,7 +171,8 @@ public class RondaActual : NetworkBehaviour
     }
 
     [Client]
-    void LevelDataProcessor(LevelGeneratorData data) {
+    void LevelDataProcessor(LevelGeneratorData data)
+    {
         Debug.Log("received data from level");
         levelGenerator.generadorColliderGlobal.GenerarAMano(
             data.posGrandes, data.tamGrandes, data.posPeques, data.tamPeques, data.puertas
