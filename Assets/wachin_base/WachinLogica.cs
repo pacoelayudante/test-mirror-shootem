@@ -31,13 +31,13 @@ public class WachinLogica : NetworkBehaviour
         get => Animator ? Animator.GetBool(rifleAnimBool) : false;
         set
         {
-            if (hasAuthority) CmdRifleSet(value);
-            // if (Animator && value != Rifle)
-            // {
-            //     Agent.speed = value ? maxVel : maxVel * factorCorre;
-            //     Animator.SetBool(rifleAnimBool, value);
-            //     Animator.Update(0f);
-            // }
+            // if (hasAuthority) CmdRifleSet(value);
+            if (Animator && value != Rifle)
+            {
+                Agent.speed = value ? maxVel : maxVel * factorCorre;
+                Animator.SetBool(rifleAnimBool, value);
+                Animator.Update(0f);
+            }
         }
     }
 

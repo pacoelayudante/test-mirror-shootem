@@ -11,10 +11,16 @@ public class Disparo : NetworkBehaviour
     Rigidbody _rigid;
     Rigidbody Rigid => _rigid?_rigid:_rigid=GetComponent<Rigidbody>();
 
+    [SerializeField, SyncVar]
     Vector3 _vel;
     public Vector3 Velocidad {
         get => _vel;
         set => _vel = Rigid?Rigid.velocity=value:value;
+    }
+
+    [ClientCallback]
+    void Start() {
+        Velocidad = _vel;
     }
 
     [ServerCallback]
