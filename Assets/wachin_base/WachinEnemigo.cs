@@ -69,9 +69,11 @@ public class WachinEnemigo : NetworkBehaviour
     {
         if (Atacable) Atacable.AlRecibirAtaque += RecibirAtaque;
     }
+    [ServerCallback]
     void OnEnable() {
         rutina = StartCoroutine(Rutina());
     }
+    [ServerCallback]
     void OnDisable() {
         StopCoroutine(rutina);
     }

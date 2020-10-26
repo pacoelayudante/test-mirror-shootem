@@ -67,6 +67,7 @@ public class RondaActual : NetworkBehaviour
     }
 
     void LevelDataRequestHandler(NetworkConnection jug, LevelDataRequest request) {
+        Debug.Log("level data being requested");
         var agrupados = levelGenerator.generadorLayouts.generados.GroupBy(cuarto=>cuarto.categoria);
         var grandes = agrupados.FirstOrDefault(grupo=>grupo.Key==LayoutCuarto.Categoria.Grande);
         var peques = agrupados.FirstOrDefault(grupo=>grupo.Key==LayoutCuarto.Categoria.Peque);
@@ -131,7 +132,7 @@ public class RondaActual : NetworkBehaviour
                 followCam.Follow = WachinJugador.local.transform;
                 camInicial.enabled = false;
                 Debug.Log("requesting level data");
-                NetworkClient.Send(new LevelDataRequest());
+                if(!isServer)NetworkClient.Send(new LevelDataRequest());
             }
         ));
     }
