@@ -16892,7 +16892,7 @@ MonoBehaviour:
   layerColliderPasables: 11
   spriteReferencia: {fileID: 21300000, guid: 25af3cdf6be1ed443a1d4483597dccd2, type: 3}
   cantGrandes: 4
-  cantMinis: 5
+  cantMinis: 20
   tamMinMaxGrandes: {x: 8, y: 20}
   tamMinMaxMinis: {x: 1, y: 5}
   atractorPrendido: 0
@@ -33550,8 +33550,8 @@ MonoBehaviour:
   rondaIniciada: 0
   prefabJugador: {fileID: 6044758492648583980, guid: 279bbf29c383b6d4b953f6b947a70535, type: 3}
   prefabGuardia: {fileID: 4852951883153804356, guid: e47ce0c183f1c9d468291c7b3b77b17c, type: 3}
-  cantGuardiasPorPatrulla: {x: 1, y: 1}
-  cantPatrullas: {x: 1, y: 1}
+  cantGuardiasPorPatrulla: {x: 3, y: 6}
+  cantPatrullas: {x: 9, y: 15}
 --- !u!114 &1844471200
 MonoBehaviour:
   m_ObjectHideFlags: 0

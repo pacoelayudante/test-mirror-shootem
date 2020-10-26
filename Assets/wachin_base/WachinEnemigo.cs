@@ -134,7 +134,7 @@ public class WachinEnemigo : NetworkBehaviour
                 posOfInterest = transform.position + offUp;//shoot from
                 if (!Physics.Linecast(attPos, posOfInterest, out hit, visionBlocker))
                 {
-                    // Wachin.ItemActivo.Activar();
+                    Wachin.ItemActivo.Activar();
                 }
             }
 

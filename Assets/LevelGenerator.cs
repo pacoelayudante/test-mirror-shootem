@@ -7,9 +7,9 @@ using Cinemachine;
 public class LevelGenerator : MonoBehaviour
 {
     [SerializeField] CinemachineVirtualCamera camInicial;
-    [SerializeField] GeneradorLayouts generadorLayouts;
-    [SerializeField] GeneradorMapaArbol generadorMapaArbol;
-    [SerializeField] GeneradorColliderGlobal generadorColliderGlobal;
+    [SerializeField] public GeneradorLayouts generadorLayouts;
+    [SerializeField] public GeneradorMapaArbol generadorMapaArbol;
+    [SerializeField] public GeneradorColliderGlobal generadorColliderGlobal;
     [SerializeField] NavMeshSurface surface;
     [SerializeField] MeshCollider meshCol;
 

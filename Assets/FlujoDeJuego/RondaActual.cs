@@ -4,6 +4,7 @@ using UnityEngine;
 using Mirror;
 using Cinemachine;
 using UnityEngine.AI;
+using System.Linq;
 
 public class RondaActual : NetworkBehaviour
 {
@@ -26,16 +27,23 @@ public class RondaActual : NetworkBehaviour
 
     Vector3 posInicial;
 
+    public class LevelGeneratorData : NetworkMessage {
+        public Vector2[] posGrandes,tamGrandes,posPeques,tamPeques,puertas;
+    }
+    public class LevelDataRequest : NetworkMessage {}
+
     void Start()
     {
         actual = this;
         if (isServer)
         {
+            NetworkServer.RegisterHandler<LevelDataRequest>(LevelDataRequestHandler,false);
+
             PrepararRonda();
         }
         else
         {
-            camInicial.enabled = false;
+            NetworkServer.RegisterHandler<LevelGeneratorData>(LevelDataProcessor);
         }
     }
     void OnDestroy() {
@@ -56,6 +64,21 @@ public class RondaActual : NetworkBehaviour
         GenerarJugadoresIniciales();
 
         rondaIniciada = true;
+    }
+
+    void LevelDataRequestHandler(NetworkConnection jug, LevelDataRequest request) {
+        var agrupados = levelGenerator.generadorLayouts.generados.GroupBy(cuarto=>cuarto.categoria);
+        var grandes = agrupados.FirstOrDefault(grupo=>grupo.Key==LayoutCuarto.Categoria.Grande);
+        var peques = agrupados.FirstOrDefault(grupo=>grupo.Key==LayoutCuarto.Categoria.Peque);
+        var data = new LevelGeneratorData(){
+            posGrandes = grandes.Select(cada=>(Vector2)cada.BoxCol.transform.TransformPoint(cada.BoxCol.offset)).ToArray(),
+            tamGrandes = grandes.Select(cada=>(Vector2)cada.BoxCol.transform.TransformVector(cada.BoxCol.size)).ToArray(),
+            posPeques = peques.Select(cada=>(Vector2)cada.BoxCol.transform.TransformPoint(cada.BoxCol.offset)).ToArray(),
+            tamPeques = peques.Select(cada=>(Vector2)cada.BoxCol.transform.TransformVector(cada.BoxCol.size)).ToArray(),
+            puertas = levelGenerator.generadorMapaArbol.vinculos.SelectMany(vinc=>vinc.puertas).ToArray()
+        };
+
+        NetworkServer.SendToClientOfPlayer(jug.identity, data);
     }
 
     void IniciarJugadorEnCombate()
@@ -107,7 +130,17 @@ public class RondaActual : NetworkBehaviour
             {
                 followCam.Follow = WachinJugador.local.transform;
                 camInicial.enabled = false;
+                Debug.Log("requesting level data");
+                NetworkClient.Send(new LevelDataRequest());
             }
         ));
+    }
+
+    void LevelDataProcessor(LevelGeneratorData data) {
+        Debug.Log("received data from level");
+        levelGenerator.generadorColliderGlobal.GenerarAMano(
+            data.posGrandes, data.tamGrandes, data.posPeques, data.tamPeques, data.puertas
+        );
+        levelGenerator.ActualizarColliderYNavSurface();
     }
 }
