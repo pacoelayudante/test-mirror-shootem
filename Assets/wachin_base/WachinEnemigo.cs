@@ -85,6 +85,7 @@ public class WachinEnemigo : NetworkBehaviour
             {
                 var fx = Instantiate(muereFx, transform.position + Vector3.up * Wachin.Agent.height / 2f, Quaternion.identity);
                 fx.transform.LookAt(Camera.main.transform, Vector3.up);
+                NetworkServer.Spawn(fx.gameObject);
             }
         }
     }
