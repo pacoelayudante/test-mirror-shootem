@@ -43,7 +43,7 @@ public class RondaActual : NetworkBehaviour
         }
         else
         {
-            NetworkServer.RegisterHandler<LevelGeneratorData>(LevelDataProcessor);
+            NetworkClient.RegisterHandler<LevelGeneratorData>(LevelDataProcessor);
         }
     }
     void OnDestroy() {
@@ -58,6 +58,21 @@ public class RondaActual : NetworkBehaviour
     {
         yield return levelGenerator.GenerarLayout();
         levelGenerator.RenderNivel(true);
+        // levelGenerator.ActualizarColliderYNavSurface();
+
+        var agrupados = levelGenerator.generadorLayouts.generados.GroupBy(cuarto=>cuarto.categoria);
+        var grandes = agrupados.FirstOrDefault(grupo=>grupo.Key==LayoutCuarto.Categoria.Grande);
+        var peques = agrupados.FirstOrDefault(grupo=>grupo.Key==LayoutCuarto.Categoria.Peque);
+        var data = new LevelGeneratorData(){
+            posGrandes = grandes.Select(cada=>(Vector2)cada.BoxCol.transform.TransformPoint(cada.BoxCol.offset)).ToArray(),
+            tamGrandes = grandes.Select(cada=>(Vector2)cada.BoxCol.transform.TransformVector(cada.BoxCol.size)).ToArray(),
+            posPeques = peques.Select(cada=>(Vector2)cada.BoxCol.transform.TransformPoint(cada.BoxCol.offset)).ToArray(),
+            tamPeques = peques.Select(cada=>(Vector2)cada.BoxCol.transform.TransformVector(cada.BoxCol.size)).ToArray(),
+            puertas = levelGenerator.generadorMapaArbol.vinculos.SelectMany(vinc=>vinc.puertas).ToArray()
+        };
+        levelGenerator.generadorColliderGlobal.GenerarAMano(
+            data.posGrandes, data.tamGrandes, data.posPeques, data.tamPeques, data.puertas
+        );
         levelGenerator.ActualizarColliderYNavSurface();
 
         GenerarPatrullas();
@@ -66,6 +81,7 @@ public class RondaActual : NetworkBehaviour
         rondaIniciada = true;
     }
 
+    [Server]
     void LevelDataRequestHandler(NetworkConnection jug, LevelDataRequest request) {
         Debug.Log("level data being requested");
         var agrupados = levelGenerator.generadorLayouts.generados.GroupBy(cuarto=>cuarto.categoria);
@@ -79,7 +95,8 @@ public class RondaActual : NetworkBehaviour
             puertas = levelGenerator.generadorMapaArbol.vinculos.SelectMany(vinc=>vinc.puertas).ToArray()
         };
 
-        NetworkServer.SendToClientOfPlayer(jug.identity, data);
+        jug.Send(data);
+        // NetworkServer.SendToClientOfPlayer(jug.identity, data);
     }
 
     void IniciarJugadorEnCombate()
@@ -131,12 +148,15 @@ public class RondaActual : NetworkBehaviour
             {
                 followCam.Follow = WachinJugador.local.transform;
                 camInicial.enabled = false;
-                Debug.Log("requesting level data");
-                if(!isServer)NetworkClient.Send(new LevelDataRequest());
+                if(!isServer){
+                    Debug.Log("requesting level data");
+                    NetworkClient.Send(new LevelDataRequest());
+                }
             }
         ));
     }
 
+    [Client]
     void LevelDataProcessor(LevelGeneratorData data) {
         Debug.Log("received data from level");
         levelGenerator.generadorColliderGlobal.GenerarAMano(

@@ -226,8 +226,8 @@ public class GeneradorColliderGlobal : MonoBehaviour
             }
             // foreach (var cuarto in seccion.cuartosPropios)
             {
-                var pos = i<posGrandes.Length?posGrandes[i]:posPeques[i];
-                var tam = i<tamGrandes.Length?tamGrandes[i]:tamPeques[i];
+                var pos = i<posGrandes.Length?posGrandes[i]:posPeques[i-posGrandes.Length];
+                var tam = i<tamGrandes.Length?tamGrandes[i]:tamPeques[i-tamGrandes.Length];
 
                 tessExterno.AddContour(RectToContour(pos, tam, externo), ContourOrientation.Clockwise);
                 tessInterno.AddContour(RectToContour(pos, tam, interno), ContourOrientation.Clockwise);
