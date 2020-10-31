@@ -114,7 +114,7 @@ public class WachinJugador : NetworkBehaviour
             var shotIntentNow = Input.GetMouseButton(mouseAttackButton);
             if (shotIntentNow != shotIntent) CmdShotIntent(shotIntent = shotIntentNow);
 
-            if (Input.GetMouseButtonDown(mouseRollButton) && intent!=Vector3.zero && !Wachin.IsRolling) Wachin.CmdRoll(intent);
+            if (Input.GetMouseButtonDown(mouseRollButton) && intent != Vector3.zero && !Wachin.IsRolling) Wachin.CmdRoll(intent);
             // var rollIntentNow = Input.GetMouseButtonDown(mouseRollButton);
             // if (rollIntentNow != rollIntent) CmdRollIntent(rollIntent = rollIntentNow);
         }
@@ -172,5 +172,17 @@ public class WachinJugador : NetworkBehaviour
     {
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(Wachin.MiraHacia, .2f);
+        if (RondaActual.actual)
+        {
+            var ind = RondaActual.actual.GetPositionIndex(transform.position);
+            var pos = RondaActual.actual.GetIndexedPosition(ind);
+#if UNITY_EDITOR
+            GUI.color = Color.red;
+            UnityEditor.Handles.Label(transform.position + Vector3.up, $"indice : {ind}\npos : {pos}");
+            GUI.color = Color.white;
+#endif
+
+            Gizmos.DrawCube(pos, Vector3.one * RondaActual.actual.gridStepSize / 3f);
+        }
     }
 }

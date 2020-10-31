@@ -17,6 +17,8 @@ public class RondaActual : NetworkBehaviour
 
     [SerializeField, SyncVar] Vector3 gridPos;
     [SerializeField, SyncVar] Vector2Int gridSize;
+    public ulong GridSizeX => (ulong)gridSize.x;
+    public ulong GridSizeY => (ulong)gridSize.y;
 
     [SerializeField, SyncVar]
     bool rondaIniciada = false;
@@ -191,12 +193,12 @@ public class RondaActual : NetworkBehaviour
         //no es necesario crear los colliders en el cliente // levelGenerator.ActualizarColliderYNavSurface();
     }
 
-    public Vector3 GetIndexedPosition(long posIndex) {
-        return gridPos + new Vector3(gridStepSize*(posIndex%gridSize.x), 0f, gridStepSize*(posIndex/gridSize.x));
+    public Vector3 GetIndexedPosition(ulong posIndex) {
+        return gridPos + new Vector3(gridStepSize*(posIndex%GridSizeX), 0f, gridStepSize*(posIndex/GridSizeX));
     }
-    public long GetPositionIndex(Vector3 pos) {
-        return Mathf.RoundToInt((pos.x-gridPos.x)/gridStepSize)
-            + Mathf.RoundToInt((pos.y-gridPos.y)/gridStepSize)*gridSize.x;
+    public ulong GetPositionIndex(Vector3 pos) {
+        return (ulong) (Mathf.RoundToInt((pos.x-gridPos.x)/gridStepSize)
+            + Mathf.RoundToInt((pos.z-gridPos.z)/gridStepSize)*gridSize.x);
     }
 
 }

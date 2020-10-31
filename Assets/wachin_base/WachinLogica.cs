@@ -90,6 +90,8 @@ public class WachinLogica : NetworkBehaviour
         }
     }
 
+    ulong lastSentPos;
+    byte lastSentRot;
     Vector3 _movIntent;
     [Command]
     void CmdMovDirSet(Vector3 value) {
@@ -150,7 +152,7 @@ public class WachinLogica : NetworkBehaviour
     {
         var mira = Vector3.ProjectOnPlane(_mirarHacia, transform.up);
         mira.y = transform.position.y;
-        transform.LookAt(mira, transform.up);
+        // transform.LookAt(mira, transform.up);
 
         if (!isServer) return;
 
@@ -162,13 +164,16 @@ public class WachinLogica : NetworkBehaviour
             else if (Agent) Animator.SetBool(caminaAnimBool, Agent.velocity.magnitude > .2f);
         }
 
-        var viewAngle = Vector2.SignedAngle( Vector2.right, new Vector2(transform.right.x, transform.right.z));
-        RpcUpdatePos( RondaActual.actual.GetPositionIndex(transform.position), (byte) ((256*Mathf.RoundToInt(viewAngle/360f))));
+        var viewAngle = Vector3.SignedAngle( Vector3.forward, mira-transform.position, Vector3.up)+180f;
+        var currentPosIndex = RondaActual.actual.GetPositionIndex(transform.position);
+        var currentAngleByte = (byte) Mathf.RoundToInt(256*viewAngle/360f);
+        if(currentPosIndex!=lastSentPos || currentAngleByte!=lastSentRot)RpcUpdatePos(lastSentPos = currentPosIndex, lastSentRot = currentAngleByte);
     }
 
     [ClientRpc(channel = 1)]
-    void RpcUpdatePos(long posIndex, byte viewDir) {
-        transform.rotation = Quaternion.Euler(0f,360f*viewDir/256f, 0f);
+    void RpcUpdatePos(ulong posIndex, byte viewDir) {
+        transform.rotation = Quaternion.Euler(0f,360f*viewDir/256f-180f, 0f);
+        if (isServer) return;
         transform.position = RondaActual.actual.GetIndexedPosition(posIndex);
     }
 
