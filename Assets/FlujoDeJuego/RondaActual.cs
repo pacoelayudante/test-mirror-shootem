@@ -16,9 +16,7 @@ public class RondaActual : NetworkBehaviour
     [SerializeField] LevelGenerator levelGenerator;
 
     [SerializeField, SyncVar] Vector3 gridPos;
-    [SerializeField, SyncVar] Vector2Int gridSize;
-    public ulong GridSizeX => (ulong)gridSize.x;
-    public ulong GridSizeY => (ulong)gridSize.y;
+    [SerializeField, SyncVar] ulong gridSizeX,gridSizeY;
 
     [SerializeField, SyncVar]
     bool rondaIniciada = false;
@@ -88,8 +86,10 @@ public class RondaActual : NetworkBehaviour
 
         gridPos = levelGenerator.Bounds.min;
         var tam = levelGenerator.Bounds.size;
-        (gridSize.x, gridSize.y) = (Mathf.CeilToInt(tam.x / gridStepSize), Mathf.CeilToInt(tam.z / gridStepSize));
-        Debug.Log($"estimated bits needed - {Mathf.Ceil(Mathf.Log(gridSize.x * gridSize.y, 2))}");
+        // (gridSize.x, gridSize.y) = (Mathf.CeilToInt(tam.x / gridStepSize), Mathf.CeilToInt(tam.z / gridStepSize));
+        gridSizeX = (ulong)Mathf.CeilToInt(tam.x / gridStepSize);
+        gridSizeY = (ulong)Mathf.CeilToInt(tam.z / gridStepSize);
+        Debug.Log($"estimated bits needed - {Mathf.Ceil(Mathf.Log(gridSizeX * gridSizeY, 2))}");
 
         GenerarJugadoresIniciales();
         GenerarPatrullas();
@@ -194,11 +194,13 @@ public class RondaActual : NetworkBehaviour
     }
 
     public Vector3 GetIndexedPosition(ulong posIndex) {
-        return gridPos + new Vector3(gridStepSize*(posIndex%GridSizeX), 0f, gridStepSize*(posIndex/GridSizeX));
+        if (gridSizeX==0 || gridSizeY==0) return Vector3.zero;
+        return gridPos + new Vector3(gridStepSize*(posIndex%gridSizeX), 0f, gridStepSize*(posIndex/gridSizeX));
     }
     public ulong GetPositionIndex(Vector3 pos) {
+        if (gridSizeX==0 || gridSizeY==0) return 0;
         return (ulong) (Mathf.RoundToInt((pos.x-gridPos.x)/gridStepSize)
-            + Mathf.RoundToInt((pos.z-gridPos.z)/gridStepSize)*gridSize.x);
+            + Mathf.RoundToInt((pos.z-gridPos.z)/gridStepSize))*gridSizeX;
     }
 
 }
