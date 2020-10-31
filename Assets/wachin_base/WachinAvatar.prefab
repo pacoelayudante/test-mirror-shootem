@@ -137,15 +137,12 @@ GameObject:
   m_Component:
   - component: {fileID: 4491740277868640107}
   - component: {fileID: 7522937719306209382}
-  - component: {fileID: 3735058115397072166}
   - component: {fileID: 426817002}
   - component: {fileID: 6826840240891757624}
   - component: {fileID: 375625724217923447}
   - component: {fileID: -162605804222372040}
   - component: {fileID: 3049136566394674185}
   - component: {fileID: 2380239601825938957}
-  - component: {fileID: 99347960832492637}
-  - component: {fileID: 8504548953493296394}
   m_Layer: 0
   m_Name: WachinAvatar
   m_TagString: Untagged
@@ -186,46 +183,6 @@ MonoBehaviour:
   serverOnly: 0
   m_AssetId: 
   hasSpawned: 0
---- !u!114 &3735058115397072166
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3402987048583700919}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 741bbe11f5357b44593b15c0d11b16bd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0
-  clientAuthority: 0
-  excludeOwnerUpdate: 0
-  syncPosition: 1
-  syncRotation: 0
-  syncScale: 0
-  interpolatePosition: 1
-  interpolateRotation: 0
-  interpolateScale: 0
-  localPositionSensitivity: 0.01
-  localRotationSensitivity: 0.01
-  localScaleSensitivity: 0.01
-  lastPosition: {x: 0, y: 0, z: 0}
-  lastRotation: {x: 0, y: 0, z: 0, w: 0}
-  lastScale: {x: 0, y: 0, z: 0}
-  start:
-    timeStamp: 0
-    localPosition: {x: 0, y: 0, z: 0}
-    localRotation: {x: 0, y: 0, z: 0, w: 0}
-    localScale: {x: 0, y: 0, z: 0}
-    movementSpeed: 0
-  goal:
-    timeStamp: 0
-    localPosition: {x: 0, y: 0, z: 0}
-    localRotation: {x: 0, y: 0, z: 0, w: 0}
-    localScale: {x: 0, y: 0, z: 0}
-    movementSpeed: 0
 --- !u!95 &426817002
 Animator:
   serializedVersion: 3
@@ -298,7 +255,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   _isRolling: 0
   vel: {x: 0, y: 0, z: 0}
-  miraHacia: {x: 0, y: 0, z: 0}
+  _mirarHacia: {x: 0, y: 0, z: 0}
 --- !u!195 &375625724217923447
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -363,39 +320,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bb82230ea3995b42a6168759c4665b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   equipo: -1
---- !u!114 &99347960832492637
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3402987048583700919}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f6f3bf89aa97405989c802ba270f815, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  clientAuthority: 0
-  animator: {fileID: 426817002}
---- !u!114 &8504548953493296394
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3402987048583700919}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f6f3bf89aa97405989c802ba270f815, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  clientAuthority: 0
-  animator: {fileID: 6084697548248551653}
 --- !u!1 &6007062247570212729
 GameObject:
   m_ObjectHideFlags: 0
@@ -707,10 +634,5 @@ PrefabInstance:
 --- !u!4 &6571418790280295082 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5908337587185149558, guid: 4c51c5c475256c142849742e294b8d27, type: 3}
-  m_PrefabInstance: {fileID: 778277391242466524}
-  m_PrefabAsset: {fileID: 0}
---- !u!95 &6084697548248551653 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 6826840240891757625, guid: 4c51c5c475256c142849742e294b8d27, type: 3}
   m_PrefabInstance: {fileID: 778277391242466524}
   m_PrefabAsset: {fileID: 0}

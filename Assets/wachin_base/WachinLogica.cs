@@ -41,7 +41,7 @@ public class WachinLogica : NetworkBehaviour
         }
     }
 
-    [SyncVar,SerializeField]
+    [SerializeField]
     bool _isRolling;
     public bool IsRolling => _isRolling;
 
@@ -110,7 +110,7 @@ public class WachinLogica : NetworkBehaviour
         }
     }
     
-    [SerializeField, SyncVar]
+    [SerializeField]
     Vector3 _mirarHacia = Vector3.zero;
     [Command]
     void CmdMirarHacia(Vector3 value) {
@@ -145,6 +145,7 @@ public class WachinLogica : NetworkBehaviour
         }
     }
 
+    [ServerCallback]
     void Update()
     {
         var mira = Vector3.ProjectOnPlane(_mirarHacia, transform.up);
@@ -160,6 +161,15 @@ public class WachinLogica : NetworkBehaviour
             if (Rigid) Animator.SetBool(caminaAnimBool, Rigid.velocity.magnitude > 0.2f);
             else if (Agent) Animator.SetBool(caminaAnimBool, Agent.velocity.magnitude > .2f);
         }
+
+        var viewAngle = Vector2.SignedAngle( Vector2.right, new Vector2(transform.right.x, transform.right.z));
+        RpcUpdatePos( RondaActual.actual.GetPositionIndex(transform.position), (byte) ((256*Mathf.RoundToInt(viewAngle/360f))));
+    }
+
+    [ClientRpc(channel = 1)]
+    void RpcUpdatePos(long posIndex, byte viewDir) {
+        transform.rotation = Quaternion.Euler(0f,360f*viewDir/256f, 0f);
+        transform.position = RondaActual.actual.GetIndexedPosition(posIndex);
     }
 
     public void Roll(Vector3 dir)

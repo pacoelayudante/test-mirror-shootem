@@ -15,11 +15,15 @@ public class RondaActual : NetworkBehaviour
     [SerializeField] MeshCollider meshCol;
     [SerializeField] LevelGenerator levelGenerator;
 
+    [SerializeField, SyncVar] Vector3 gridPos;
+    [SerializeField, SyncVar] Vector2Int gridSize;
+
     [SerializeField, SyncVar]
     bool rondaIniciada = false;
     Dictionary<JugadorMirror, WachinLogica> jugadoresIniciados = new Dictionary<JugadorMirror, WachinLogica>();
     List<JugadorMirror> jugadoresDerrotados = new List<JugadorMirror>();
 
+    public float gridStepSize = .15f;
     public WachinLogica prefabJugador;
     public WachinLogica prefabGuardia;
     public Vector2Int cantGuardiasPorPatrulla = new Vector2Int(3, 6);
@@ -53,6 +57,7 @@ public class RondaActual : NetworkBehaviour
         if (actual == this) actual = null;
     }
 
+    [ContextMenu("Preparar Ronda")]
     void PrepararRonda()
     {
         StartCoroutine(PrepararRondaRutina());
@@ -78,6 +83,11 @@ public class RondaActual : NetworkBehaviour
             data.posGrandes, data.tamGrandes, data.posPeques, data.tamPeques, data.puertas
         );
         levelGenerator.ActualizarColliderYNavSurface();
+
+        gridPos = levelGenerator.Bounds.min;
+        var tam = levelGenerator.Bounds.size;
+        (gridSize.x, gridSize.y) = (Mathf.CeilToInt(tam.x / gridStepSize), Mathf.CeilToInt(tam.z / gridStepSize));
+        Debug.Log($"estimated bits needed - {Mathf.Ceil(Mathf.Log(gridSize.x * gridSize.y, 2))}");
 
         GenerarJugadoresIniciales();
         GenerarPatrullas();
@@ -120,7 +130,8 @@ public class RondaActual : NetworkBehaviour
         for (int i = 0; i < numPatrullas; i++)
         {
             var pos = LayoutEnMundo.PuntoRandomEnLayout();
-            if (Vector3.Distance(posInicial,pos) < distMinimaGuardias) {
+            if (Vector3.Distance(posInicial, pos) < distMinimaGuardias)
+            {
                 i--;
                 continue;
             }
@@ -177,6 +188,15 @@ public class RondaActual : NetworkBehaviour
         levelGenerator.generadorColliderGlobal.GenerarAMano(
             data.posGrandes, data.tamGrandes, data.posPeques, data.tamPeques, data.puertas
         );
-        levelGenerator.ActualizarColliderYNavSurface();
+        //no es necesario crear los colliders en el cliente // levelGenerator.ActualizarColliderYNavSurface();
     }
+
+    public Vector3 GetIndexedPosition(long posIndex) {
+        return gridPos + new Vector3(gridStepSize*(posIndex%gridSize.x), 0f, gridStepSize*(posIndex/gridSize.x));
+    }
+    public long GetPositionIndex(Vector3 pos) {
+        return Mathf.RoundToInt((pos.x-gridPos.x)/gridStepSize)
+            + Mathf.RoundToInt((pos.y-gridPos.y)/gridStepSize)*gridSize.x;
+    }
+
 }
