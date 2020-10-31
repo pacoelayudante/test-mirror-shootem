@@ -18,6 +18,8 @@ public class LevelGenerator : MonoBehaviour
     public Vector2Int cantGuardiasPorPatrulla = new Vector2Int(3, 6);
     public Vector2Int cantPatrullas = new Vector2Int(9, 15);
 
+    public Bounds Bounds => meshCol.bounds;
+
     public Coroutine GenerarLayout(bool renderIntermedio = true) => StartCoroutine(GenerarLayoutsRutina(renderIntermedio));
     IEnumerator GenerarLayoutsRutina(bool renderIntermedio = true)
     {

@@ -33547,11 +33547,15 @@ MonoBehaviour:
   surface: {fileID: 1063876836}
   meshCol: {fileID: 1063876840}
   levelGenerator: {fileID: 1063876842}
+  gridPos: {x: 0, y: 0, z: 0}
+  gridSize: {x: 0, y: 0}
   rondaIniciada: 0
+  gridStepSize: 0.15
   prefabJugador: {fileID: 6044758492648583980, guid: 279bbf29c383b6d4b953f6b947a70535, type: 3}
   prefabGuardia: {fileID: 4852951883153804356, guid: e47ce0c183f1c9d468291c7b3b77b17c, type: 3}
   cantGuardiasPorPatrulla: {x: 3, y: 6}
   cantPatrullas: {x: 9, y: 15}
+  distMinimaGuardias: 30
 --- !u!114 &1844471200
 MonoBehaviour:
   m_ObjectHideFlags: 0
