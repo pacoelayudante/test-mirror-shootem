@@ -36,7 +36,8 @@ public class WachinLogica : NetworkBehaviour
             {
                 Agent.speed = value ? maxVel : maxVel * factorCorre;
                 Animator.SetBool(rifleAnimBool, value);
-                Animator.Update(0f);
+                Animator.Update(0f);// malisimo, no deberia depender de la animacion la posicion de la salida del tiro, pero bue
+                RpcRifleSet(value);
             }
         }
     }
@@ -45,18 +46,18 @@ public class WachinLogica : NetworkBehaviour
     bool _isRolling;
     public bool IsRolling => _isRolling;
 
-    [Command]
-    void CmdRifleSet(bool value) {
-        Agent.speed = value ? maxVel : maxVel * factorCorre;
-        // RpcRifleSet(value);
+    // [Command]
+    // void CmdRifleSet(bool value) {
+    //     Agent.speed = value ? maxVel : maxVel * factorCorre;
+    //     // RpcRifleSet(value);
         
-            if (Animator && value != Rifle)
-            {
-                Agent.speed = value ? maxVel : maxVel * factorCorre;
-                Animator.SetBool(rifleAnimBool, value);
-                Animator.Update(0f);
-            }
-    }
+    //         if (Animator && value != Rifle)
+    //         {
+    //             Agent.speed = value ? maxVel : maxVel * factorCorre;
+    //             // Animator.SetBool(rifleAnimBool, value);
+    //             // Animator.Update(0f);
+    //         }
+    // }
     [ClientRpc]
     void RpcRifleSet(bool value) {
         if (Animator && value != Rifle)
@@ -90,7 +91,7 @@ public class WachinLogica : NetworkBehaviour
         }
     }
 
-    ulong lastSentPos;
+    ulong lastSentPos, lastReceivedPos;
     byte lastSentRot;
     Vector3 _movIntent;
     [Command]
@@ -158,11 +159,11 @@ public class WachinLogica : NetworkBehaviour
 
         if (!IsRolling && !Agent.hasPath) Agent.velocity = _movIntent*Agent.speed;
 
-        if (Animator)
-        {
-            if (Rigid) Animator.SetBool(caminaAnimBool, Rigid.velocity.magnitude > 0.2f);
-            else if (Agent) Animator.SetBool(caminaAnimBool, Agent.velocity.magnitude > .2f);
-        }
+        // if (Animator)
+        // {
+        //     if (Rigid) Animator.SetBool(caminaAnimBool, Rigid.velocity.magnitude > 0.2f);
+        //     else if (Agent) Animator.SetBool(caminaAnimBool, Agent.velocity.magnitude > .2f);
+        // }
 
         var viewAngle = Vector3.SignedAngle( Vector3.forward, mira-transform.position, Vector3.up)+180f;
         var currentPosIndex = RondaActual.actual.GetPositionIndex(transform.position);
@@ -170,10 +171,27 @@ public class WachinLogica : NetworkBehaviour
         if(currentPosIndex!=lastSentPos || currentAngleByte!=lastSentRot)RpcUpdatePos(lastSentPos = currentPosIndex, lastSentRot = currentAngleByte);
     }
 
+    Vector3 lastPos;
+    [ClientCallback]
+    private void LateUpdate() {
+        if (Animator)
+        {
+            Animator.SetBool(caminaAnimBool, lastPos!=transform.position);
+        }
+        lastPos = transform.position; 
+    }
+
     [ClientRpc(channel = 1)]
     void RpcUpdatePos(ulong posIndex, byte viewDir) {
         transform.rotation = Quaternion.Euler(0f,360f*viewDir/256f-180f, 0f);
+        
+        // if (Animator)
+        // {
+        //     Animator.SetBool(caminaAnimBool, lastReceivedPos!=posIndex);
+        //     lastReceivedPos = posIndex;
+        // }
         if (isServer) return;
+
         transform.position = RondaActual.actual.GetIndexedPosition(posIndex);
     }
 
@@ -197,12 +215,13 @@ public class WachinLogica : NetworkBehaviour
         var rollT = 0f;
         var travelledDist = 0f;
         
-        if (Animator)
-        {
-            Animator.SetTrigger(rollAnimTrigger);
-            Animator.SetInteger(dirAnimInt, (dir.x < 0 ? 1 : 0) + (dir.z < 0 ? 2 : 0));
-            Animator.SetFloat(rollDurAnimFloat, 1f/rollDuration);
-        }
+        RpcRollAnim( (byte)((dir.x < 0 ? 1 : 0) + (dir.z < 0 ? 2 : 0)) );
+        // if (Animator)
+        // {
+        //     Animator.SetTrigger(rollAnimTrigger);
+        //     Animator.SetInteger(dirAnimInt, (dir.x < 0 ? 1 : 0) + (dir.z < 0 ? 2 : 0));
+        //     Animator.SetFloat(rollDurAnimFloat, 1f/rollDuration);
+        // }
 
         while (rollT < rollDuration)
         {
@@ -218,34 +237,14 @@ public class WachinLogica : NetworkBehaviour
         Agent.ResetPath();
     }
 
-    [ServerCallback]
-    void FixedUpdateX()
-    {
-        if (!Rigid) return;
-        var dt = Time.inFixedTimeStep ? Time.fixedDeltaTime : Time.deltaTime;
-
-        var velBuscada = Vector3.MoveTowards(Vector3.zero, PosBuscada - transform.position, maxVel);
-        if (acel == 0) vel = velBuscada;
-        else vel = Vector3.MoveTowards(vel, velBuscada, acel * dt);
-
-        var currentMove = vel * dt;
-        var moveDist = currentMove.magnitude;
-
-        // if (Physics.SphereCast(transform.position, radio, currentMove, out hit, currentMove.magnitude, wallLayers))
-        // if (Rigid.SweepTest(currentMove,out hit, moveDist))
-        // {
-        //     var slide = Vector3.MoveTowards(currentMove, Vector3.zero, moveDist - hit.distance);
-        //     currentMove -= slide;
-        //     currentMove += Vector3.ProjectOnPlane(slide, hit.normal);
-        // }
-        if (Rigid)
+    [ClientRpc]
+    void RpcRollAnim(byte dir) {
+        if (Animator)
         {
-            // Rigid.velocity = currentMove / dt;
-            Rigid.velocity = vel;
-        }
-        else
-        {
-            transform.position += currentMove;
-        }
+            Animator.SetTrigger(rollAnimTrigger);
+            Animator.SetInteger(dirAnimInt, dir);
+            Animator.SetFloat(rollDurAnimFloat, 1f/rollDuration);
+        }        
     }
+
 }
