@@ -16,7 +16,7 @@ public class RondaActual : NetworkBehaviour
     [SerializeField] LevelGenerator levelGenerator;
 
     [SerializeField, SyncVar] Vector3 gridPos;
-    [SerializeField, SyncVar] ulong gridSizeX,gridSizeY;
+    [SerializeField, SyncVar] uint gridSizeX,gridSizeY;
 
     [SerializeField, SyncVar]
     bool rondaIniciada = false;
@@ -29,6 +29,8 @@ public class RondaActual : NetworkBehaviour
     public Vector2Int cantGuardiasPorPatrulla = new Vector2Int(3, 6);
     public Vector2Int cantPatrullas = new Vector2Int(9, 15);
     public float distMinimaGuardias = 30f;
+
+    Vector3[] posList;
 
     Vector3 posInicial;
 
@@ -87,8 +89,14 @@ public class RondaActual : NetworkBehaviour
         gridPos = levelGenerator.Bounds.min;
         var tam = levelGenerator.Bounds.size;
         // (gridSize.x, gridSize.y) = (Mathf.CeilToInt(tam.x / gridStepSize), Mathf.CeilToInt(tam.z / gridStepSize));
-        gridSizeX = (ulong)Mathf.CeilToInt(tam.x / gridStepSize);
-        gridSizeY = (ulong)Mathf.CeilToInt(tam.z / gridStepSize);
+        gridSizeX = (uint)Mathf.CeilToInt(tam.x / gridStepSize);
+        gridSizeY = (uint)Mathf.CeilToInt(tam.z / gridStepSize);
+        posList = new Vector3[gridSizeX*gridSizeY];
+        for (int i=0; i<posList.Length; i++) {
+            var x = i%gridSizeX;
+            var y = i/gridSizeX;
+            posList[i] = gridPos + new Vector3( gridStepSize*x, 0f, gridStepSize*y );
+        }
         Debug.Log($"estimated bits needed - {Mathf.Ceil(Mathf.Log(gridSizeX * gridSizeY, 2))}");
 
         GenerarJugadoresIniciales();
@@ -190,17 +198,25 @@ public class RondaActual : NetworkBehaviour
         levelGenerator.generadorColliderGlobal.GenerarAMano(
             data.posGrandes, data.tamGrandes, data.posPeques, data.tamPeques, data.puertas
         );
+        
+        posList = new Vector3[gridSizeX*gridSizeY];
+        for (int i=0; i<posList.Length; i++) {
+            var x = i%gridSizeX;
+            var y = i/gridSizeX;
+            posList[i] = gridPos + new Vector3( gridStepSize*x, 0f, gridStepSize*y );
+        }
         //no es necesario crear los colliders en el cliente // levelGenerator.ActualizarColliderYNavSurface();
     }
 
     public Vector3 GetIndexedPosition(ulong posIndex) {
-        if (gridSizeX==0 || gridSizeY==0) return Vector3.zero;
-        return gridPos + new Vector3(gridStepSize*(posIndex%gridSizeX), 0f, gridStepSize*(posIndex/gridSizeX));
+        if (posList == null || posList.Length == 0) return Vector3.zero;
+        // return gridPos + new Vector3(gridStepSize*(posIndex%gridSizeX), 0f, gridStepSize*(posIndex/gridSizeX));
+        return posList[posIndex];
     }
     public ulong GetPositionIndex(Vector3 pos) {
         if (gridSizeX==0 || gridSizeY==0) return 0;
         return (ulong) (Mathf.RoundToInt((pos.x-gridPos.x)/gridStepSize)
-            + Mathf.RoundToInt((pos.z-gridPos.z)/gridStepSize))*gridSizeX;
+            + gridSizeX*Mathf.RoundToInt((pos.z-gridPos.z)/gridStepSize));
     }
 
 }
