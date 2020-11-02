@@ -14,6 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
+  posiblesGorros:
+  - {fileID: 7357237701386180286, guid: 0d0358c66c343e3459f421248de604e9, type: 3}
+  - {fileID: 5949874009719285385, guid: a3b5a677460161c4bb513d9ca87dd215, type: 3}
+  - {fileID: 2981290779237785073, guid: ab2024b34ee477847b5e01cedc6d528a, type: 3}
+  - {fileID: 157348555185001685, guid: a0c06915e7f042140916a9bd70ba2ee0, type: 3}
+  - {fileID: 825328482258761136, guid: c405121e92485294499111df5cd1c233, type: 3}
+  - {fileID: 3238802264957586554, guid: 38a9aa7241282124fb55adea90aa771e, type: 3}
+  - {fileID: 1952279822769138793, guid: 4b9abbf92161a514cbef69a1e5f30b92, type: 3}
   maxHp: 3
   der: 275
   aba: 274
@@ -24,10 +32,12 @@ MonoBehaviour:
   izqAlt: 97
   arrAlt: 119
   rifleTimeToLower: 1.5
+  gorroIndex: -1
   _clipSize: 8
   reloadDuration: 3
   _currentBulletCount: 0
   _reloadingMark: 0
+  cabezaRefe: {fileID: 2671743621312332130}
   mouseAttackButton: 0
   mouseRollButton: 1
 --- !u!1001 &963353424893196052
@@ -75,15 +85,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4491740277868640107, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -463.12915
+      value: -327.7095
       objectReference: {fileID: 0}
     - target: {fileID: 4491740277868640107, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.000029731775
+      value: -0.00045095797
       objectReference: {fileID: 0}
     - target: {fileID: 4491740277868640107, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 10.179927
+      value: -154.40448
       objectReference: {fileID: 0}
     - target: {fileID: 4491740277868640107, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
       propertyPath: m_LocalRotation.x
@@ -151,6 +161,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bb82230ea3995b42a6168759c4665b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &2671743621312332130 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2904105423480485494, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
+  m_PrefabInstance: {fileID: 963353424893196052}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7645125553472543473 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7441765153396501989, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}

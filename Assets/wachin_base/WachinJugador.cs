@@ -8,11 +8,16 @@ public class WachinJugador : NetworkBehaviour
 {
     public static WachinJugador local;
 
+    public GameObject[] posiblesGorros = new GameObject[0];
+
     public float maxHp = 3;
     public KeyCode der = KeyCode.RightArrow, aba = KeyCode.DownArrow, izq = KeyCode.LeftArrow, arr = KeyCode.UpArrow;
     public KeyCode derAlt = KeyCode.D, abaAlt = KeyCode.S, izqAlt = KeyCode.A, arrAlt = KeyCode.W;
     public float rifleTimeToLower = 3f;
     float currentRifleLowerTime = 0;
+
+    [SyncVar]
+    [SerializeField] int gorroIndex = -1;
 
     [SyncVar]
     [SerializeField] int _clipSize = 8;
@@ -25,6 +30,8 @@ public class WachinJugador : NetworkBehaviour
     float _reloadingMark;
     public bool IsReloading => Time.time < _reloadingMark;
     public float ReloadingProgress => 1f - (_reloadingMark - Time.time) / reloadDuration;
+
+    [SerializeField] Transform cabezaRefe;
 
     [SerializeField] int mouseAttackButton = 0, mouseRollButton = 1;
 
@@ -59,6 +66,15 @@ public class WachinJugador : NetworkBehaviour
     void Start()
     {
         if (hasAuthority) local = this;
+
+        if (gorroIndex != -1) {
+            var gorro = Instantiate(posiblesGorros[gorroIndex], cabezaRefe.position, cabezaRefe.rotation, cabezaRefe.parent);
+            gorro.transform.localPosition = cabezaRefe.localPosition;
+            gorro.transform.localRotation = cabezaRefe.localRotation;
+            gorro.name = cabezaRefe.name;
+            Destroy(cabezaRefe.gameObject);
+            Wachin.Animator.Rebind();
+        }
     }
 
     void AlRecibirAtaque(float dmg)

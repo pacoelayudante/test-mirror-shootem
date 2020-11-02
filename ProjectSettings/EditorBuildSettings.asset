@@ -5,7 +5,7 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
+  - enabled: 1
     path: Assets/FlujoDeJuego/mirrormenu_steam.unity
     guid: 380b18a5bb44fe341b79bcde488a59fb
   - enabled: 1

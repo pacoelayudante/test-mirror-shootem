@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f09e56c3a3851fc4bbd53861de79a35e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   buscadoEnPatrulla:
     serializedVersion: 2
     m_Bits: 1024
@@ -34,11 +36,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2047203187505264196, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
       propertyPath: m_Color.g
-      value: 0
+      value: 0.5566038
       objectReference: {fileID: 0}
     - target: {fileID: 2047203187505264196, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
       propertyPath: m_Color.b
-      value: 0
+      value: 0.5566038
+      objectReference: {fileID: 0}
+    - target: {fileID: 2047203187505264196, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
+      propertyPath: m_Color.r
+      value: 0.5566038
       objectReference: {fileID: 0}
     - target: {fileID: 2380239601825938957, guid: 8999241a54dd96a4b88d98e84c2cdd2a, type: 3}
       propertyPath: equipo

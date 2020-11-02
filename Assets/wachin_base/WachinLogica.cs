@@ -22,6 +22,8 @@ public class WachinLogica : NetworkBehaviour
     [SerializeField] string dirAnimInt;
     [AnimatorStringList(AnimatorStringListAttribute.Tipo.Parametros)]
     [SerializeField] string rollDurAnimFloat;
+    [AnimatorStringList(AnimatorStringListAttribute.Tipo.Parametros)]
+    [SerializeField] string cabezaMiraAnimBool;
     [SerializeField] float rollDuration = .4f;
     [SerializeField] float rollDistance = 1.5f;
     [SerializeField]AnimationCurve rollCurve = AnimationCurve.EaseInOut(0,0,1,1);
@@ -132,7 +134,7 @@ public class WachinLogica : NetworkBehaviour
     public NavMeshAgent Agent => _agent ? _agent : _agent = GetComponent<NavMeshAgent>();
 
     Animator _animator;
-    Animator Animator => _animator ? _animator : _animator = GetComponent<Animator>();
+    public Animator Animator => _animator ? _animator : _animator = GetComponent<Animator>();
 
     ItemActivo _itemActivo;
     public ItemActivo ItemActivo => _itemActivo ? _itemActivo : _itemActivo = GetComponentInChildren<ItemActivo>();
@@ -184,6 +186,7 @@ public class WachinLogica : NetworkBehaviour
     [ClientRpc(channel = 1)]
     void RpcUpdatePos(ulong posIndex, byte viewDir) {
         transform.rotation = Quaternion.Euler(0f,360f*viewDir/256f-180f, 0f);
+        if (Animator) Animator.SetBool(cabezaMiraAnimBool, transform.forward.z > 0f);
         
         // if (Animator)
         // {

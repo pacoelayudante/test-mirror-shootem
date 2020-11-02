@@ -17,7 +17,6 @@ public static class ControlSteam
         try
         {
             SteamClient.Init(480);
-
         }
         catch (System.Exception e)
         {
