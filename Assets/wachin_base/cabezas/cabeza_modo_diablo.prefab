@@ -15,7 +15,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1030570732610197877
 Transform:
   m_ObjectHideFlags: 0
@@ -124,7 +124,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3801443044964071323}
   m_Layer: 0
-  m_Name: cabeza
+  m_Name: cabeza_modo_diablo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

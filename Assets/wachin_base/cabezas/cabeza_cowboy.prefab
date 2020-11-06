@@ -15,7 +15,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5949874008354066593
 Transform:
   m_ObjectHideFlags: 0
@@ -154,7 +154,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5949874009719285386}
   m_Layer: 0
-  m_Name: cabeza
+  m_Name: cabeza_cowboy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

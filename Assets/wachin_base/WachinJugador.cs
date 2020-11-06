@@ -17,15 +17,18 @@ public class WachinJugador : NetworkBehaviour
     float currentRifleLowerTime = 0;
 
     [SyncVar]
-    [SerializeField] int gorroIndex = -1;
+    public int gorroIndex = -1;
 
     [SyncVar]
     [SerializeField] int _clipSize = 8;
-    [SerializeField] float reloadDuration = 1f;
+    public float reloadDuration = 1f;
 
     [SerializeField, SyncVar] int _currentBulletCount;
     public int CurrentBulletCount => _currentBulletCount;
-    public int ClipSize => _clipSize;
+    public int ClipSize {
+        get => _clipSize;
+        set => _clipSize = value;
+    }
     [SerializeField, SyncVar]
     float _reloadingMark;
     public bool IsReloading => Time.time < _reloadingMark;
@@ -36,7 +39,7 @@ public class WachinJugador : NetworkBehaviour
     [SerializeField] int mouseAttackButton = 0, mouseRollButton = 1;
 
     WachinLogica _wachin;
-    WachinLogica Wachin => _wachin ? _wachin : _wachin = GetComponent<WachinLogica>();
+    public WachinLogica Wachin => _wachin ? _wachin : _wachin = GetComponent<WachinLogica>();
 
     bool shotIntent;
     [Command]
@@ -67,14 +70,16 @@ public class WachinJugador : NetworkBehaviour
     {
         if (hasAuthority) local = this;
 
-        if (gorroIndex != -1) {
-            var gorro = Instantiate(posiblesGorros[gorroIndex], cabezaRefe.position, cabezaRefe.rotation, cabezaRefe.parent);
+        if (gorroIndex >= 0) {
+            var gorro = Instantiate(posiblesGorros[gorroIndex%posiblesGorros.Length], cabezaRefe.position, cabezaRefe.rotation, cabezaRefe.parent);
             gorro.transform.localPosition = cabezaRefe.localPosition;
             gorro.transform.localRotation = cabezaRefe.localRotation;
             gorro.name = cabezaRefe.name;
             Destroy(cabezaRefe.gameObject);
             Wachin.Animator.Rebind();
         }
+
+        
     }
 
     void AlRecibirAtaque(float dmg)

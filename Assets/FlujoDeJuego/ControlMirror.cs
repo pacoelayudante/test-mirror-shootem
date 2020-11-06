@@ -24,6 +24,10 @@ public class ControlMirror : MonoBehaviour
     public void StartHost() {
         if (NetworkManager.singleton) {
             NetworkManager.singleton.StartHost();
+        serverMenu.SetActive(false);
+        lobbyMenu.SetActive(true);
+        onGame = true;
+        if (!string.IsNullOrEmpty(gameScene)) NetworkManager.singleton.ServerChangeScene(gameScene);
         }
     }
 
@@ -32,13 +36,15 @@ public class ControlMirror : MonoBehaviour
         if (NetworkManager.singleton) {
             // NetworkManager.singleton.StartClient( new System.Uri(ip) );
             NetworkManager.singleton.StartClient();
+        serverMenu.SetActive(false);
+        lobbyMenu.SetActive(true);
         }
     }
 
-    private void Update() {
-        serverMenu.SetActive(!NetworkManager.singleton.isNetworkActive);
-        lobbyMenu.SetActive(!onGame && NetworkManager.singleton.isNetworkActive && !RondaActual.actual && NetworkServer.active);
-    }
+    // private void Update() {
+    //     serverMenu.SetActive(!NetworkManager.singleton.isNetworkActive);
+    //     lobbyMenu.SetActive(!onGame && NetworkManager.singleton.isNetworkActive && !RondaActual.actual && NetworkServer.active);
+    // }
 
     public void Jugar() {
         onGame = true;

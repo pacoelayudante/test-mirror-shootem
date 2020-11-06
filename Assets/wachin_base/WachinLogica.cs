@@ -9,6 +9,7 @@ using Mirror;
 public class WachinLogica : NetworkBehaviour
 {
     public float maxVel = 10;
+
     [SerializeField] float acel = 50;
     [SerializeField] float factorCorre = 1.5f;
     [SerializeField] LayerMask wallLayers;
@@ -36,11 +37,19 @@ public class WachinLogica : NetworkBehaviour
             // if (hasAuthority) CmdRifleSet(value);
             if (Animator && value != Rifle)
             {
-                Agent.speed = value ? maxVel : maxVel * factorCorre;
+                Agent.speed = value ? MaxVel : MaxVel * factorCorre;
                 Animator.SetBool(rifleAnimBool, value);
                 Animator.Update(0f);// malisimo, no deberia depender de la animacion la posicion de la salida del tiro, pero bue
                 RpcRifleSet(value);
             }
+        }
+    }
+
+    public float MaxVel {
+        get => maxVel;
+        set {
+            maxVel = value;
+            if (Agent) Agent.speed = maxVel;
         }
     }
 
@@ -145,7 +154,7 @@ public class WachinLogica : NetworkBehaviour
         if (Agent)
         {
             Agent.updateRotation = false;
-            Agent.speed = maxVel * factorCorre;
+            Agent.speed = MaxVel * factorCorre;
             Agent.acceleration = acel;
         }
     }

@@ -16,19 +16,21 @@ public class RondaActual : NetworkBehaviour
     [SerializeField] LevelGenerator levelGenerator;
 
     [SerializeField, SyncVar] Vector3 gridPos;
-    [SerializeField, SyncVar] uint gridSizeX,gridSizeY;
+    [SerializeField, SyncVar] uint gridSizeX, gridSizeY;
 
     [SerializeField, SyncVar]
     bool rondaIniciada = false;
-    Dictionary<JugadorMirror, WachinLogica> jugadoresIniciados = new Dictionary<JugadorMirror, WachinLogica>();
+    Dictionary<JugadorMirror, WachinJugador> jugadoresIniciados = new Dictionary<JugadorMirror, WachinJugador>();
     List<JugadorMirror> jugadoresDerrotados = new List<JugadorMirror>();
 
     public float gridStepSize = .15f;
-    public WachinLogica prefabJugador;
+    public WachinJugador prefabJugador;
     public WachinLogica prefabGuardia;
     public Vector2Int cantGuardiasPorPatrulla = new Vector2Int(3, 6);
     public Vector2Int cantPatrullas = new Vector2Int(9, 15);
     public float distMinimaGuardias = 30f;
+    [Guazu.DrawersCopados.CreameScriptable]
+    public BibliotecaBrutaDeMods modsList;
 
     Vector3[] posList;
 
@@ -91,11 +93,12 @@ public class RondaActual : NetworkBehaviour
         // (gridSize.x, gridSize.y) = (Mathf.CeilToInt(tam.x / gridStepSize), Mathf.CeilToInt(tam.z / gridStepSize));
         gridSizeX = (uint)Mathf.CeilToInt(tam.x / gridStepSize);
         gridSizeY = (uint)Mathf.CeilToInt(tam.z / gridStepSize);
-        posList = new Vector3[gridSizeX*gridSizeY];
-        for (int i=0; i<posList.Length; i++) {
-            var x = i%gridSizeX;
-            var y = i/gridSizeX;
-            posList[i] = gridPos + new Vector3( gridStepSize*x, 0f, gridStepSize*y );
+        posList = new Vector3[gridSizeX * gridSizeY];
+        for (int i = 0; i < posList.Length; i++)
+        {
+            var x = i % gridSizeX;
+            var y = i / gridSizeX;
+            posList[i] = gridPos + new Vector3(gridStepSize * x, 0f, gridStepSize * y);
         }
         Debug.Log($"estimated bits needed - {Mathf.Ceil(Mathf.Log(gridSizeX * gridSizeY, 2))}");
 
@@ -103,6 +106,41 @@ public class RondaActual : NetworkBehaviour
         GenerarPatrullas();
 
         rondaIniciada = true;
+
+        StartCoroutine(GeneradorDeJugadores());
+    }
+
+    IEnumerator GeneradorDeJugadores()
+    {
+        while (gameObject)
+        {
+            foreach (var jug in JugadorMirror.jugadores.Except(jugadoresIniciados.Keys))
+            {
+                if (jug.preparade)
+                {
+                    IniciarJugadorEnCombate(jug);
+                }
+
+            }
+            yield return null;
+        }
+    }
+
+    void IniciarJugadorEnCombate(JugadorMirror jug)
+    {
+        var pj = Instantiate(prefabJugador, posInicial, Quaternion.identity);
+        pj.gorroIndex = jug.gorritoDeseado%pj.posiblesGorros.Length;
+
+        if (modsList) {
+            if (jug.modUno) modsList.ModFijoArmaduraLenta(pj.Wachin);
+            if (jug.modDos) modsList.ModFijoEscopeta(pj.Wachin);
+            if (jug.modTres) modsList.ModFijoPrecisionPeligrosa(pj.Wachin);
+        }
+        // prefabJugador.gameObject.SetActive(true);
+        pj.Wachin.Agent.Warp(pj.transform.position);
+        NetworkServer.Spawn(pj.gameObject, jug.gameObject);
+
+        jugadoresIniciados.Add(jug, pj);
     }
 
     [Server]
@@ -123,15 +161,6 @@ public class RondaActual : NetworkBehaviour
 
         jug.Send(data);
         // NetworkServer.SendToClientOfPlayer(jug.identity, data);
-    }
-
-    void IniciarJugadorEnCombate()
-    {
-        StartCoroutine(IniciarJugadorEnCombateRutina());
-    }
-    IEnumerator IniciarJugadorEnCombateRutina()
-    {
-        yield return null;
     }
 
     void GenerarPatrullas()
@@ -156,19 +185,25 @@ public class RondaActual : NetworkBehaviour
         }
     }
 
+    [ClientRpc]
+    void RpcPosicionarCamaraPreviamente()
+    {
+        // if (followCam) followCam.
+    }
+
     void GenerarJugadoresIniciales()
     {
         posInicial = LayoutEnMundo.PuntoRandomEnLayout();
-        foreach (var jug in JugadorMirror.jugadores)
-        {
-            var pj = Instantiate(prefabJugador, posInicial, Quaternion.identity);
-            prefabJugador.gameObject.SetActive(true);
-            prefabJugador.Agent.Warp(pj.transform.position);
-            NetworkServer.Spawn(pj.gameObject, jug.gameObject);
+        // foreach (var jug in JugadorMirror.jugadores)
+        // {
+        //     var pj = Instantiate(prefabJugador, posInicial, Quaternion.identity);
+        //     prefabJugador.gameObject.SetActive(true);
+        //     prefabJugador.Agent.Warp(pj.transform.position);
+        //     NetworkServer.Spawn(pj.gameObject, jug.gameObject);
 
-            jugadoresIniciados.Add(jug, pj);
+        //     jugadoresIniciados.Add(jug, pj);
 
-        }
+        // }
 
         RpcIniciarParaJugadores();
     }
@@ -198,25 +233,28 @@ public class RondaActual : NetworkBehaviour
         levelGenerator.generadorColliderGlobal.GenerarAMano(
             data.posGrandes, data.tamGrandes, data.posPeques, data.tamPeques, data.puertas
         );
-        
-        posList = new Vector3[gridSizeX*gridSizeY];
-        for (int i=0; i<posList.Length; i++) {
-            var x = i%gridSizeX;
-            var y = i/gridSizeX;
-            posList[i] = gridPos + new Vector3( gridStepSize*x, 0f, gridStepSize*y );
+
+        posList = new Vector3[gridSizeX * gridSizeY];
+        for (int i = 0; i < posList.Length; i++)
+        {
+            var x = i % gridSizeX;
+            var y = i / gridSizeX;
+            posList[i] = gridPos + new Vector3(gridStepSize * x, 0f, gridStepSize * y);
         }
         //no es necesario crear los colliders en el cliente // levelGenerator.ActualizarColliderYNavSurface();
     }
 
-    public Vector3 GetIndexedPosition(ulong posIndex) {
+    public Vector3 GetIndexedPosition(ulong posIndex)
+    {
         if (posList == null || posList.Length == 0) return Vector3.zero;
         // return gridPos + new Vector3(gridStepSize*(posIndex%gridSizeX), 0f, gridStepSize*(posIndex/gridSizeX));
         return posList[posIndex];
     }
-    public ulong GetPositionIndex(Vector3 pos) {
-        if (gridSizeX==0 || gridSizeY==0) return 0;
-        return (ulong) (Mathf.RoundToInt((pos.x-gridPos.x)/gridStepSize)
-            + gridSizeX*Mathf.RoundToInt((pos.z-gridPos.z)/gridStepSize));
+    public ulong GetPositionIndex(Vector3 pos)
+    {
+        if (gridSizeX == 0 || gridSizeY == 0) return 0;
+        return (ulong)(Mathf.RoundToInt((pos.x - gridPos.x) / gridStepSize)
+            + gridSizeX * Mathf.RoundToInt((pos.z - gridPos.z) / gridStepSize));
     }
 
 }

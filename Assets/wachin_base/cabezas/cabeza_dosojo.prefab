@@ -454,7 +454,7 @@ GameObject:
   m_Component:
   - component: {fileID: 157348555185001690}
   m_Layer: 0
-  m_Name: cabeza
+  m_Name: cabeza_dosojo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -491,7 +491,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &157348555684615654
 Transform:
   m_ObjectHideFlags: 0

@@ -19,6 +19,9 @@ public class SteamLobbyControl : MonoBehaviour
     Dictionary<Friend, Button> botonAutoJoin = new Dictionary<Friend, Button>();
     Dictionary<Friend, Lobby> lobbies = new Dictionary<Friend, Lobby>();
 
+    [Guazu.DrawersCopados.SceneAssetPathAsString]
+    public string gameScene;
+
     void SetearInteractivo(bool interactivo) {
         if (abrirServer) abrirServer.interactable = interactivo;
         if (unirseManual) unirseManual.interactable = interactivo;
@@ -141,6 +144,8 @@ public class SteamLobbyControl : MonoBehaviour
 
             panelDeConexion.SetActive(false);
             panelDeJuego.SetActive(true);
+
+            if(!string.IsNullOrEmpty(gameScene)) NetworkManager.singleton.ServerChangeScene(gameScene);
         }
         else
         {
