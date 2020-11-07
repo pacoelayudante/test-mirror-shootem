@@ -56,6 +56,14 @@ public class RondaActual : NetworkBehaviour
             NetworkClient.RegisterHandler<LevelGeneratorData>(LevelDataProcessor);
             NetworkClient.Send(new LevelDataRequest());
         }
+
+        StartCoroutine(GameUtils.EsperarTrueLuegoHacerCallback(
+            () => WachinJugador.local,
+            () =>
+            {
+                followCam.Follow = WachinJugador.local.transform;
+                camInicial.enabled = false;
+            }));
     }
     void OnDestroy()
     {
@@ -127,6 +135,7 @@ public class RondaActual : NetworkBehaviour
         }
     }
 
+    [Server]
     void IniciarJugadorEnCombate(JugadorMirror jug)
     {
         var pj = Instantiate(prefabJugador, posInicial, Quaternion.identity);
@@ -205,22 +214,24 @@ public class RondaActual : NetworkBehaviour
         // RpcIniciarParaJugadores();
     }
 
-    [ClientRpc]
+    [ClientRpc, System.Obsolete]
     void RpcIniciarParaJugadores()
     {
-        StartCoroutine(GameUtils.EsperarTrueLuegoHacerCallback(
-            () => WachinJugador.local,
-            () =>
-            {
-                followCam.Follow = WachinJugador.local.transform;
-                camInicial.enabled = false;
-                if (!isServer)
-                {
-                    Debug.Log("requesting level data");
-                    NetworkClient.Send(new LevelDataRequest());
-                }
-            }
-        ));
+        followCam.Follow = WachinJugador.local.transform;
+        camInicial.enabled = false;
+        // StartCoroutine(GameUtils.EsperarTrueLuegoHacerCallback(
+        //     () => WachinJugador.local,
+        //     () =>
+        //     {
+        //         followCam.Follow = WachinJugador.local.transform;
+        //         camInicial.enabled = false;
+        //         if (!isServer)
+        //         {
+        //             Debug.Log("requesting level data");
+        //             NetworkClient.Send(new LevelDataRequest());
+        //         }
+        //     }
+        // ));
     }
 
     [Client]
