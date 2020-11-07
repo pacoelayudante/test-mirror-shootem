@@ -21,15 +21,16 @@ public class WachinJugador : NetworkBehaviour
 
     [SyncVar]
     [SerializeField] int _clipSize = 8;
-    public float reloadDuration = 1f;
+    [SyncVar] public float reloadDuration = 1f;
 
     [SerializeField, SyncVar] int _currentBulletCount;
     public int CurrentBulletCount => _currentBulletCount;
-    public int ClipSize {
+    public int ClipSize
+    {
         get => _clipSize;
         set => _clipSize = value;
     }
-    [SerializeField, SyncVar]
+    // [SerializeField, SyncVar]
     float _reloadingMark;
     public bool IsReloading => Time.time < _reloadingMark;
     public float ReloadingProgress => 1f - (_reloadingMark - Time.time) / reloadDuration;
@@ -66,20 +67,20 @@ public class WachinJugador : NetworkBehaviour
         if (Atacable) Atacable.AlRecibirAtaque += AlRecibirAtaque;
     }
 
-    void Start()
+    IEnumerator Start()
     {
         if (hasAuthority) local = this;
 
-        if (gorroIndex >= 0) {
-            var gorro = Instantiate(posiblesGorros[gorroIndex%posiblesGorros.Length], cabezaRefe.position, cabezaRefe.rotation, cabezaRefe.parent);
+        if (gorroIndex >= 0)
+        {
+            var gorro = Instantiate(posiblesGorros[gorroIndex % posiblesGorros.Length], cabezaRefe.position, cabezaRefe.rotation, cabezaRefe.parent);
             gorro.transform.localPosition = cabezaRefe.localPosition;
             gorro.transform.localRotation = cabezaRefe.localRotation;
             gorro.name = cabezaRefe.name;
             Destroy(cabezaRefe.gameObject);
+            yield return null;
             Wachin.Animator.Rebind();
         }
-
-        
     }
 
     void AlRecibirAtaque(float dmg)
@@ -94,9 +95,15 @@ public class WachinJugador : NetworkBehaviour
     IEnumerator Reload()
     {
         if (IsReloading) yield break;
-        _reloadingMark = Time.time + reloadDuration;
+        // _reloadingMark = Time.time + reloadDuration;
+        RpcSetReloadingMark();
         yield return new WaitForSeconds(reloadDuration);
         _currentBulletCount = _clipSize;
+    }
+    [ClientRpc]
+    void RpcSetReloadingMark()
+    {
+        _reloadingMark = Time.time + reloadDuration - (float)NetworkTime.offset;
     }
 
     void Update()

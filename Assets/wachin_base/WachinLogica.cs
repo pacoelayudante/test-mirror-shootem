@@ -28,6 +28,9 @@ public class WachinLogica : NetworkBehaviour
     [SerializeField] float rollDuration = .4f;
     [SerializeField] float rollDistance = 1.5f;
     [SerializeField] AnimationCurve rollCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+    [Header("Predicciones")]
+    public float distPrediccionMaxima = 0.2f;
+    public float distPegarSalto = 0.6f;
 
     public bool Rifle
     {
@@ -107,7 +110,8 @@ public class WachinLogica : NetworkBehaviour
         }
     }
 
-    ulong lastSentPos, lastReceivedPos;
+    double lastReceivedPosT,prevToLastPosT;
+    ulong lastSentPos, lastReceivedPos, prevToLastPos;
     byte lastSentRot;
     Vector3 _movIntent;
     [Command]
@@ -178,14 +182,17 @@ public class WachinLogica : NetworkBehaviour
     {
     }
 
-    [ServerCallback]
+    // [ServerCallback]
     void Update()
     {
+        if (!isServer) {
+            PositionPrediction();
+            return;
+        }
+
         var mira = Vector3.ProjectOnPlane(_mirarHacia, transform.up);
         mira.y = transform.position.y;
         // transform.LookAt(mira, transform.up);
-
-        if (!isServer) return;
 
         if (!IsRolling && !Agent.hasPath) Agent.velocity = _movIntent * Agent.speed;
 
@@ -212,9 +219,29 @@ public class WachinLogica : NetworkBehaviour
         lastPos = transform.position;
     }
 
+    [Client]
+    void PositionPrediction() {
+        var posVieja = RondaActual.actual.GetIndexedPosition(prevToLastPos);
+        var posNecesaria = RondaActual.actual.GetIndexedPosition(lastReceivedPos);
+        var posDiff = (posNecesaria-posVieja);
+        var posPredicta = Vector3.MoveTowards(posNecesaria, posNecesaria+posDiff, distPrediccionMaxima);
+
+        var velEstimada = posDiff.magnitude/(lastReceivedPosT-prevToLastPosT);        
+        
+        var nuevaPos = Vector3.MoveTowards(posVieja, transform.position, distPegarSalto);
+        nuevaPos = Vector3.MoveTowards(nuevaPos, posPredicta, (float)velEstimada*Time.deltaTime);
+        transform.position = nuevaPos;
+    }
+
     [ClientRpc(channel = 1)]
     void RpcUpdatePos(ulong posIndex, byte viewDir)
     {
+        prevToLastPosT = lastReceivedPosT;
+        lastReceivedPosT = Time.realtimeSinceStartup;
+
+        prevToLastPos = lastReceivedPos;        
+        lastReceivedPos = posIndex;
+
         transform.rotation = Quaternion.Euler(0f, 360f * viewDir / 256f - 180f, 0f);
         if (Animator) Animator.SetBool(cabezaMiraAnimBool, transform.forward.z > 0f);
 
@@ -225,7 +252,7 @@ public class WachinLogica : NetworkBehaviour
         // }
         if (isServer) return;
 
-        transform.position = RondaActual.actual.GetIndexedPosition(posIndex);
+        // transform.position = RondaActual.actual.GetIndexedPosition(posIndex);
     }
 
     public void Roll(Vector3 dir)
