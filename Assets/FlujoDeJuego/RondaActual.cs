@@ -15,8 +15,10 @@ public class RondaActual : NetworkBehaviour
     [SerializeField] MeshCollider meshCol;
     [SerializeField] LevelGenerator levelGenerator;
 
-    [SerializeField, SyncVar] Vector3 gridPos;
-    [SerializeField, SyncVar] uint gridSizeX, gridSizeY;
+    // [SerializeField, SyncVar] 
+    Vector3 gridPos;
+    // [SerializeField, SyncVar] 
+    uint gridSizeX, gridSizeY;
 
     [SerializeField, SyncVar]
     bool rondaIniciada = false;
@@ -38,6 +40,8 @@ public class RondaActual : NetworkBehaviour
 
     public class LevelGeneratorData : NetworkMessage
     {
+    public Vector3 gridPos;
+    public uint gridSizeX, gridSizeY;
         public Vector2[] posGrandes, tamGrandes, posPeques, tamPeques, puertas;
     }
     public class LevelDataRequest : NetworkMessage { }
@@ -168,6 +172,9 @@ public class RondaActual : NetworkBehaviour
                 var peques = agrupados.FirstOrDefault(grupo => grupo.Key == LayoutCuarto.Categoria.Peque);
                 var data = new LevelGeneratorData()
                 {
+                    gridPos= gridPos,
+                    gridSizeX = gridSizeX,
+                    gridSizeY = gridSizeY,
                     posGrandes = grandes.Select(cada => (Vector2)cada.BoxCol.transform.TransformPoint(cada.BoxCol.offset)).ToArray(),
                     tamGrandes = grandes.Select(cada => (Vector2)cada.BoxCol.transform.TransformVector(cada.BoxCol.size)).ToArray(),
                     posPeques = peques.Select(cada => (Vector2)cada.BoxCol.transform.TransformPoint(cada.BoxCol.offset)).ToArray(),
@@ -237,11 +244,16 @@ public class RondaActual : NetworkBehaviour
     [Client]
     void LevelDataProcessor(LevelGeneratorData data)
     {
+        gridPos= data.gridPos;
+        gridSizeX = data.gridSizeX;
+        gridSizeY = data.gridSizeY;
+
         Debug.Log("received data from level");
         levelGenerator.generadorColliderGlobal.GenerarAMano(
             data.posGrandes, data.tamGrandes, data.posPeques, data.tamPeques, data.puertas
         );
 
+        Debug.Log($"{gridSizeX}-{gridSizeY}");
         posList = new Vector3[gridSizeX * gridSizeY];
         for (int i = 0; i < posList.Length; i++)
         {

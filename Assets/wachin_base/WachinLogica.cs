@@ -27,7 +27,7 @@ public class WachinLogica : NetworkBehaviour
     [SerializeField] string cabezaMiraAnimBool;
     [SerializeField] float rollDuration = .4f;
     [SerializeField] float rollDistance = 1.5f;
-    [SerializeField]AnimationCurve rollCurve = AnimationCurve.EaseInOut(0,0,1,1);
+    [SerializeField] AnimationCurve rollCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
     public bool Rifle
     {
@@ -45,9 +45,11 @@ public class WachinLogica : NetworkBehaviour
         }
     }
 
-    public float MaxVel {
+    public float MaxVel
+    {
         get => maxVel;
-        set {
+        set
+        {
             maxVel = value;
             if (Agent) Agent.speed = maxVel;
         }
@@ -61,7 +63,7 @@ public class WachinLogica : NetworkBehaviour
     // void CmdRifleSet(bool value) {
     //     Agent.speed = value ? maxVel : maxVel * factorCorre;
     //     // RpcRifleSet(value);
-        
+
     //         if (Animator && value != Rifle)
     //         {
     //             Agent.speed = value ? maxVel : maxVel * factorCorre;
@@ -70,7 +72,8 @@ public class WachinLogica : NetworkBehaviour
     //         }
     // }
     [ClientRpc]
-    void RpcRifleSet(bool value) {
+    void RpcRifleSet(bool value)
+    {
         if (Animator && value != Rifle)
         {
             Animator.SetBool(rifleAnimBool, value);
@@ -92,10 +95,12 @@ public class WachinLogica : NetworkBehaviour
     }
 
     Vector3 _lastSentMovDir = Vector3.zero;
-    public Vector3 MovDir {
+    public Vector3 MovDir
+    {
         get => Agent.velocity.normalized;
-        set {
-            if (hasAuthority && _lastSentMovDir!=value) CmdMovDirSet(_lastSentMovDir = value);
+        set
+        {
+            if (hasAuthority && _lastSentMovDir != value) CmdMovDirSet(_lastSentMovDir = value);
             // if (IsRolling) return;
             // if(Agent.hasPath) Agent.ResetPath();
             // Agent.velocity = value*Agent.speed;
@@ -106,28 +111,33 @@ public class WachinLogica : NetworkBehaviour
     byte lastSentRot;
     Vector3 _movIntent;
     [Command]
-    void CmdMovDirSet(Vector3 value) {
+    void CmdMovDirSet(Vector3 value)
+    {
         _movIntent = value;
         if (IsRolling) return;
-        if(Agent.hasPath) Agent.ResetPath();
-        Agent.velocity = _movIntent*Agent.speed;
+        if (Agent.hasPath) Agent.ResetPath();
+        Agent.velocity = _movIntent * Agent.speed;
     }
 
     Vector3 _lastSentMirar = Vector3.zero;
-    public Vector3 MiraHacia {
+    public Vector3 MiraHacia
+    {
         get => _mirarHacia;
-        set {
-            if (hasAuthority && _lastSentMirar!=value) {
+        set
+        {
+            if (hasAuthority && _lastSentMirar != value)
+            {
                 CmdMirarHacia(_lastSentMirar = value);
             }
             else if (isServer) _mirarHacia = value;
         }
     }
-    
+
     [SerializeField]
     Vector3 _mirarHacia = Vector3.zero;
     [Command]
-    void CmdMirarHacia(Vector3 value) {
+    void CmdMirarHacia(Vector3 value)
+    {
         _mirarHacia = value;
     }
 
@@ -135,7 +145,7 @@ public class WachinLogica : NetworkBehaviour
     RaycastHit hit;
     Rigidbody _rigid;
     Rigidbody Rigid => _rigid ? _rigid : _rigid = GetComponent<Rigidbody>();
-    
+
     Collider _collider;
     Collider Collider => _collider ? _collider : _collider = GetComponent<Collider>();
 
@@ -153,10 +163,19 @@ public class WachinLogica : NetworkBehaviour
     {
         if (Agent)
         {
-            Agent.updateRotation = false;
-            Agent.speed = MaxVel * factorCorre;
-            Agent.acceleration = acel;
+            if (isServer)
+            {
+                Agent.enabled = true;
+                Agent.updateRotation = false;
+                Agent.speed = MaxVel * factorCorre;
+                Agent.acceleration = acel;
+            }
         }
+    }
+
+    [ClientCallback]
+    void Awake()
+    {
     }
 
     [ServerCallback]
@@ -168,7 +187,7 @@ public class WachinLogica : NetworkBehaviour
 
         if (!isServer) return;
 
-        if (!IsRolling && !Agent.hasPath) Agent.velocity = _movIntent*Agent.speed;
+        if (!IsRolling && !Agent.hasPath) Agent.velocity = _movIntent * Agent.speed;
 
         // if (Animator)
         // {
@@ -176,27 +195,29 @@ public class WachinLogica : NetworkBehaviour
         //     else if (Agent) Animator.SetBool(caminaAnimBool, Agent.velocity.magnitude > .2f);
         // }
 
-        var viewAngle = Vector3.SignedAngle( Vector3.forward, mira-transform.position, Vector3.up)+180f;
+        var viewAngle = Vector3.SignedAngle(Vector3.forward, mira - transform.position, Vector3.up) + 180f;
         var currentPosIndex = RondaActual.actual.GetPositionIndex(transform.position);
-        var currentAngleByte = (byte) Mathf.RoundToInt(256*viewAngle/360f);
-        if(currentPosIndex!=lastSentPos || currentAngleByte!=lastSentRot)RpcUpdatePos(lastSentPos = currentPosIndex, lastSentRot = currentAngleByte);
+        var currentAngleByte = (byte)Mathf.RoundToInt(256 * viewAngle / 360f);
+        if (currentPosIndex != lastSentPos || currentAngleByte != lastSentRot) RpcUpdatePos(lastSentPos = currentPosIndex, lastSentRot = currentAngleByte);
     }
 
     Vector3 lastPos;
     [ClientCallback]
-    private void LateUpdate() {
+    private void LateUpdate()
+    {
         if (Animator)
         {
-            Animator.SetBool(caminaAnimBool, lastPos!=transform.position);
+            Animator.SetBool(caminaAnimBool, lastPos != transform.position);
         }
-        lastPos = transform.position; 
+        lastPos = transform.position;
     }
 
     [ClientRpc(channel = 1)]
-    void RpcUpdatePos(ulong posIndex, byte viewDir) {
-        transform.rotation = Quaternion.Euler(0f,360f*viewDir/256f-180f, 0f);
+    void RpcUpdatePos(ulong posIndex, byte viewDir)
+    {
+        transform.rotation = Quaternion.Euler(0f, 360f * viewDir / 256f - 180f, 0f);
         if (Animator) Animator.SetBool(cabezaMiraAnimBool, transform.forward.z > 0f);
-        
+
         // if (Animator)
         // {
         //     Animator.SetBool(caminaAnimBool, lastReceivedPos!=posIndex);
@@ -209,10 +230,11 @@ public class WachinLogica : NetworkBehaviour
 
     public void Roll(Vector3 dir)
     {
-        if(hasAuthority) CmdRoll(dir);
+        if (hasAuthority) CmdRoll(dir);
     }
     [Command]
-    public void CmdRoll(Vector3 dir) {
+    public void CmdRoll(Vector3 dir)
+    {
         if (IsRolling || dir == Vector3.zero) return;
         StartCoroutine(DoRoll(dir));
     }
@@ -220,14 +242,14 @@ public class WachinLogica : NetworkBehaviour
     IEnumerator DoRoll(Vector3 dir)
     {
         _isRolling = true;
-        if(Collider)Collider.enabled = false;
+        if (Collider) Collider.enabled = false;
         Agent.isStopped = true;
         Rifle = false;
         dir.Normalize();
         var rollT = 0f;
         var travelledDist = 0f;
-        
-        RpcRollAnim( (byte)((dir.x < 0 ? 1 : 0) + (dir.z < 0 ? 2 : 0)) );
+
+        RpcRollAnim((byte)((dir.x < 0 ? 1 : 0) + (dir.z < 0 ? 2 : 0)));
         // if (Animator)
         // {
         //     Animator.SetTrigger(rollAnimTrigger);
@@ -237,26 +259,27 @@ public class WachinLogica : NetworkBehaviour
 
         while (rollT < rollDuration)
         {
-            var newDist = rollCurve.Evaluate(rollT/rollDuration);
-            Agent.Move(dir*(newDist-travelledDist)*rollDistance);
+            var newDist = rollCurve.Evaluate(rollT / rollDuration);
+            Agent.Move(dir * (newDist - travelledDist) * rollDistance);
             travelledDist = newDist;
             rollT += Time.deltaTime;
             yield return null;
         }
         _isRolling = false;
-        Agent.isStopped = false ;
-        if(Collider)Collider.enabled = true;
+        Agent.isStopped = false;
+        if (Collider) Collider.enabled = true;
         Agent.ResetPath();
     }
 
     [ClientRpc]
-    void RpcRollAnim(byte dir) {
+    void RpcRollAnim(byte dir)
+    {
         if (Animator)
         {
             Animator.SetTrigger(rollAnimTrigger);
             Animator.SetInteger(dirAnimInt, dir);
-            Animator.SetFloat(rollDurAnimFloat, 1f/rollDuration);
-        }        
+            Animator.SetFloat(rollDurAnimFloat, 1f / rollDuration);
+        }
     }
 
 }
