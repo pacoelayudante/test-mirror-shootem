@@ -21,30 +21,27 @@ public class HitFlash : MonoBehaviour
             {
                 if (JugadorLocal && JugadorLocal.Atacable)
                 {
-                    (_att = JugadorLocal.Atacable).AlRecibirAtaque += Flash;
+                    (_att = JugadorLocal.Atacable).AlRecibirAtaqueClient += Flash;
                 }
             }
         ));
     }
-    void Update()
-    {
-        if (!_att) OnEnable();
-    }
+    // void Update()
+    // {
+        // if (!_att) OnEnable();
+    // }
     private void OnDisable()
     {
         if (_att != null)
         {
-            _att.AlRecibirAtaque -= Flash;
+            _att.AlRecibirAtaqueClient -= Flash;
             _att = null;
         }
     }
 
-    void Flash(float dmg)
+    void Flash()
     {
-        if (dmg > 0f)
-        {
-            StartCoroutine(FlashCo());
-        }
+        StartCoroutine(FlashCo());
     }
     IEnumerator FlashCo()
     {

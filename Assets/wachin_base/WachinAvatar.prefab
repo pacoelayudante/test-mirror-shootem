@@ -254,6 +254,8 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  distPrediccionMaxima: 0.2
+  distPegarSalto: 0.6
   _isRolling: 0
   vel: {x: 0, y: 0, z: 0}
   _mirarHacia: {x: 0, y: 0, z: 0}
@@ -445,6 +447,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7441765153396501989}
+  - component: {fileID: 1891373288946185053}
   m_Layer: 0
   m_Name: offset_objeto
   m_TagString: Untagged
@@ -467,6 +470,18 @@ Transform:
   m_Father: {fileID: 3248266797322598144}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1891373288946185053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6062133238864123480}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf033fd8a12aec84db99c36b97c9a743, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6416595552652995216
 GameObject:
   m_ObjectHideFlags: 0
