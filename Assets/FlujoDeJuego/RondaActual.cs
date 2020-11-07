@@ -54,6 +54,7 @@ public class RondaActual : NetworkBehaviour
         else
         {
             NetworkClient.RegisterHandler<LevelGeneratorData>(LevelDataProcessor);
+            NetworkClient.Send(new LevelDataRequest());
         }
     }
     void OnDestroy()
@@ -129,9 +130,10 @@ public class RondaActual : NetworkBehaviour
     void IniciarJugadorEnCombate(JugadorMirror jug)
     {
         var pj = Instantiate(prefabJugador, posInicial, Quaternion.identity);
-        pj.gorroIndex = jug.gorritoDeseado%pj.posiblesGorros.Length;
+        pj.gorroIndex = jug.gorritoDeseado % pj.posiblesGorros.Length;
 
-        if (modsList) {
+        if (modsList)
+        {
             if (jug.modUno) modsList.ModFijoArmaduraLenta(pj.Wachin);
             if (jug.modDos) modsList.ModFijoEscopeta(pj.Wachin);
             if (jug.modTres) modsList.ModFijoPrecisionPeligrosa(pj.Wachin);
@@ -147,20 +149,25 @@ public class RondaActual : NetworkBehaviour
     void LevelDataRequestHandler(NetworkConnection jug, LevelDataRequest request)
     {
         Debug.Log("level data being requested");
-        var agrupados = levelGenerator.generadorLayouts.generados.GroupBy(cuarto => cuarto.categoria);
-        var grandes = agrupados.FirstOrDefault(grupo => grupo.Key == LayoutCuarto.Categoria.Grande);
-        var peques = agrupados.FirstOrDefault(grupo => grupo.Key == LayoutCuarto.Categoria.Peque);
-        var data = new LevelGeneratorData()
-        {
-            posGrandes = grandes.Select(cada => (Vector2)cada.BoxCol.transform.TransformPoint(cada.BoxCol.offset)).ToArray(),
-            tamGrandes = grandes.Select(cada => (Vector2)cada.BoxCol.transform.TransformVector(cada.BoxCol.size)).ToArray(),
-            posPeques = peques.Select(cada => (Vector2)cada.BoxCol.transform.TransformPoint(cada.BoxCol.offset)).ToArray(),
-            tamPeques = peques.Select(cada => (Vector2)cada.BoxCol.transform.TransformVector(cada.BoxCol.size)).ToArray(),
-            puertas = levelGenerator.generadorMapaArbol.vinculos.SelectMany(vinc => vinc.puertas).ToArray()
-        };
+        StartCoroutine(GameUtils.EsperarTrueLuegoHacerCallback(
+            () => rondaIniciada,
+            () =>
+            {
+                Debug.Log("level data ready, sending");
+                var agrupados = levelGenerator.generadorLayouts.generados.GroupBy(cuarto => cuarto.categoria);
+                var grandes = agrupados.FirstOrDefault(grupo => grupo.Key == LayoutCuarto.Categoria.Grande);
+                var peques = agrupados.FirstOrDefault(grupo => grupo.Key == LayoutCuarto.Categoria.Peque);
+                var data = new LevelGeneratorData()
+                {
+                    posGrandes = grandes.Select(cada => (Vector2)cada.BoxCol.transform.TransformPoint(cada.BoxCol.offset)).ToArray(),
+                    tamGrandes = grandes.Select(cada => (Vector2)cada.BoxCol.transform.TransformVector(cada.BoxCol.size)).ToArray(),
+                    posPeques = peques.Select(cada => (Vector2)cada.BoxCol.transform.TransformPoint(cada.BoxCol.offset)).ToArray(),
+                    tamPeques = peques.Select(cada => (Vector2)cada.BoxCol.transform.TransformVector(cada.BoxCol.size)).ToArray(),
+                    puertas = levelGenerator.generadorMapaArbol.vinculos.SelectMany(vinc => vinc.puertas).ToArray()
+                };
 
-        jug.Send(data);
-        // NetworkServer.SendToClientOfPlayer(jug.identity, data);
+                jug.Send(data);
+            }));
     }
 
     void GenerarPatrullas()
@@ -194,18 +201,8 @@ public class RondaActual : NetworkBehaviour
     void GenerarJugadoresIniciales()
     {
         posInicial = LayoutEnMundo.PuntoRandomEnLayout();
-        // foreach (var jug in JugadorMirror.jugadores)
-        // {
-        //     var pj = Instantiate(prefabJugador, posInicial, Quaternion.identity);
-        //     prefabJugador.gameObject.SetActive(true);
-        //     prefabJugador.Agent.Warp(pj.transform.position);
-        //     NetworkServer.Spawn(pj.gameObject, jug.gameObject);
 
-        //     jugadoresIniciados.Add(jug, pj);
-
-        // }
-
-        RpcIniciarParaJugadores();
+        // RpcIniciarParaJugadores();
     }
 
     [ClientRpc]
