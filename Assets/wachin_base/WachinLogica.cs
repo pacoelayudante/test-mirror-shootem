@@ -25,6 +25,8 @@ public class WachinLogica : NetworkBehaviour
     [SerializeField] string rollDurAnimFloat;
     [AnimatorStringList(AnimatorStringListAttribute.Tipo.Parametros)]
     [SerializeField] string cabezaMiraAnimBool;
+    [AnimatorStringList(AnimatorStringListAttribute.Tipo.Parametros)]
+    [SerializeField] string noqueadeAnimBool;
     [SerializeField] float rollDuration = .4f;
     [SerializeField] float rollDistance = 1.5f;
     [SerializeField] AnimationCurve rollCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
@@ -62,6 +64,17 @@ public class WachinLogica : NetworkBehaviour
     bool _isRolling;
     public bool IsRolling => _isRolling;
 
+    public bool puedeRollar = true;
+    bool noqueade = false;
+    public bool Noqueade {
+        get => noqueade;
+        set {
+            noqueade = value;
+            if(Collider)Collider.enabled = !noqueade;
+            RpcNoqueadeSet(noqueade);
+        }
+    }
+
     // [Command]
     // void CmdRifleSet(bool value) {
     //     Agent.speed = value ? maxVel : maxVel * factorCorre;
@@ -82,6 +95,11 @@ public class WachinLogica : NetworkBehaviour
             Animator.SetBool(rifleAnimBool, value);
             Animator.Update(0f);
         }
+    }
+    [ClientRpc]
+    void RpcNoqueadeSet(bool value)
+    {
+        if(Animator)Animator.SetBool(noqueadeAnimBool, value);
     }
 
     public Vector3 vel;
@@ -118,7 +136,7 @@ public class WachinLogica : NetworkBehaviour
     void CmdMovDirSet(Vector3 value)
     {
         _movIntent = value;
-        if (IsRolling) return;
+        if (IsRolling || noqueade) return;
         if (Agent.hasPath) Agent.ResetPath();
         Agent.velocity = _movIntent * Agent.speed;
     }
@@ -194,7 +212,7 @@ public class WachinLogica : NetworkBehaviour
         mira.y = transform.position.y;
         // transform.LookAt(mira, transform.up);
 
-        if (!IsRolling && !Agent.hasPath) Agent.velocity = _movIntent * Agent.speed;
+        if (!IsRolling && !Agent.hasPath && !noqueade) Agent.velocity = _movIntent * Agent.speed;
 
         // if (Animator)
         // {
@@ -262,7 +280,7 @@ public class WachinLogica : NetworkBehaviour
     [Command]
     public void CmdRoll(Vector3 dir)
     {
-        if (IsRolling || dir == Vector3.zero) return;
+        if (IsRolling || !puedeRollar || dir == Vector3.zero) return;
         StartCoroutine(DoRoll(dir));
     }
 

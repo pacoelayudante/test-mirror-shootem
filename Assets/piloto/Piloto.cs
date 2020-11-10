@@ -36,8 +36,8 @@ public class Piloto : MonoBehaviour
     [SerializeField] float arcoActivoPointDefense = 20f;
 
     [SerializeField] float stunMaxAmp = 90f;
-    [SerializeField] float stunNoiseScale = .01f;
-    [SerializeField] float stunDecayTime = .2f;
+    // [SerializeField] float stunNoiseScale = .01f;
+    // [SerializeField] float stunDecayTime = .2f;
     float stun = 0f;
 
     public static Piloto Cercano(Vector2 pos)=>pilotos.OrderBy(piloto=>Vector2.Distance(pos,piloto.transform.position)).FirstOrDefault();

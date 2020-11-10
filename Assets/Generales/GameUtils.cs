@@ -144,10 +144,11 @@ public static class GameUtils {
 #if UNITY_EDITOR
     static List<Rigidbody2D> reactivarRigids = new List<Rigidbody2D>();
     static void IterarFisica(int iteraciones, float deltaT = 0) {
-        if (!Physics2D.autoSimulation) return;
+        if (Physics2D.simulationMode == SimulationMode2D.Script) return;
         if (deltaT == 0) deltaT = Time.fixedDeltaTime/2f;
         if (deltaT == 0) return;
-        Physics2D.autoSimulation = false;
+        var simModePrevio = Physics2D.simulationMode;
+        Physics2D.simulationMode = SimulationMode2D.Script;
         foreach(var rigid in reactivarRigids) {
             if(rigid)rigid.simulated = false;
         }
@@ -165,7 +166,7 @@ public static class GameUtils {
             }
         }
         EditorUtility.ClearProgressBar();
-        Physics2D.autoSimulation = true;
+        Physics2D.simulationMode = simModePrevio;
         foreach(var rigid in reactivarRigids) {
             if(rigid)rigid.simulated = true;
         }

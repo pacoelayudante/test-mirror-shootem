@@ -83,7 +83,7 @@ public class Corsario : MonoBehaviour
     Vector2 positionOfInterest;
     Vector2 _gotoOffset;
     Vector2 Goto => positionOfInterest + _gotoOffset;
-    float lastdt = 1f;
+    // float lastdt = 1f;
 
     void OnEnable()
     {

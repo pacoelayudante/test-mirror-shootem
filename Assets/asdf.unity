@@ -11713,12 +11713,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08443dfcd4e7f794ab11edc34aa21a3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resetButton: 114
-  escapeButton: 27
   textUI: {fileID: 693233812}
   formatoEnemigosRestantes: 'Enemigos Restantes: {0}'
-  resetearCon: Reiniciar Escenario Con '{0}'
-  abortarCon: Abortar Escenario Con '{0}'
 --- !u!1 &667253537
 GameObject:
   m_ObjectHideFlags: 0
@@ -12481,7 +12477,7 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 10
     m_MaxSize: 40
-    m_Alignment: 0
+    m_Alignment: 6
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
@@ -33547,15 +33543,13 @@ MonoBehaviour:
   surface: {fileID: 1063876836}
   meshCol: {fileID: 1063876840}
   levelGenerator: {fileID: 1063876842}
-  gridPos: {x: 0, y: 0, z: 0}
-  gridSizeX: 0
-  gridSizeY: 0
   rondaIniciada: 0
   gridStepSize: 0.15
   prefabJugador: {fileID: 3484476076410952678, guid: 279bbf29c383b6d4b953f6b947a70535, type: 3}
   prefabGuardia: {fileID: 4852951883153804356, guid: e47ce0c183f1c9d468291c7b3b77b17c, type: 3}
   cantGuardiasPorPatrulla: {x: 3, y: 6}
   cantPatrullas: {x: 9, y: 15}
+  chanceEscopeta: 0.1
   distMinimaGuardias: 30
   modsList: {fileID: 11400000, guid: 27fed7f19fbb1ab4a96ff69f8a586edb, type: 2}
 --- !u!114 &1844471200

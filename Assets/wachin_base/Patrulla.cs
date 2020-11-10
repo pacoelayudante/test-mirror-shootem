@@ -24,6 +24,13 @@ public class Patrulla
     public Vector3 PosLider => wachines[0].transform.position;
     public WachinEnemigo Lider => wachines[0];
 
+    public List<Atacable> objetivosRegistrados = new List<Atacable>();
+    public void NuevoObjetivo(Atacable a) {
+        if (!objetivosRegistrados.Contains(a)) objetivosRegistrados.Add(a);
+    }
+    public Atacable TomarObjetivoRandom() => objetivosRegistrados.Count>0?objetivosRegistrados[Random.Range(0,objetivosRegistrados.Count)]:null;
+    public bool ObjetivoRegistrado(Atacable a) => objetivosRegistrados.Contains(a);
+
     public Vector3 destinoPatrulla;
     public int Count => wachines.Count;
 

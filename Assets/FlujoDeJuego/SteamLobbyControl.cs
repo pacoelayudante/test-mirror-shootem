@@ -47,6 +47,12 @@ public class SteamLobbyControl : MonoBehaviour
             panelDeConexion.SetActive(true);
             panelDeJuego.SetActive(false);
         });
+
+        NetworkManager.singleton.GetComponent<Transport>().OnServerDisconnected.AddListener( (valor)=>{
+            SetearInteractivo(true);            
+            panelDeConexion.SetActive(false);
+            panelDeJuego.SetActive(true);
+        });
     }
     void StartCuandoSteam()
     {

@@ -228,6 +228,7 @@ MonoBehaviour:
   dirAnimInt: orientacion_general
   rollDurAnimFloat: rollDurationInverse
   cabezaMiraAnimBool: cabezaMiraAtras
+  noqueadeAnimBool: al_suelo
   rollDuration: 0.7
   rollDistance: 7
   rollCurve:
@@ -257,6 +258,7 @@ MonoBehaviour:
   distPrediccionMaxima: 0.2
   distPegarSalto: 0.6
   _isRolling: 0
+  puedeRollar: 1
   vel: {x: 0, y: 0, z: 0}
   _mirarHacia: {x: 0, y: 0, z: 0}
 --- !u!195 &375625724217923447

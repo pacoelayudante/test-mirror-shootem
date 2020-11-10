@@ -30,6 +30,7 @@ public class RondaActual : NetworkBehaviour
     public WachinLogica prefabGuardia;
     public Vector2Int cantGuardiasPorPatrulla = new Vector2Int(3, 6);
     public Vector2Int cantPatrullas = new Vector2Int(9, 15);
+    public float chanceEscopeta = 1f/10f;
     public float distMinimaGuardias = 30f;
     [Guazu.DrawersCopados.CreameScriptable]
     public BibliotecaBrutaDeMods modsList;
@@ -203,6 +204,9 @@ public class RondaActual : NetworkBehaviour
             for (int g = 0; g < guardias; g++)
             {
                 var guardia = Instantiate(prefabGuardia, pos, Quaternion.identity);
+                if (Random.value < chanceEscopeta) {
+                    modsList.ModFijoEscopeta(guardia);
+                }
                 NetworkServer.Spawn(guardia.gameObject);
             }
         }

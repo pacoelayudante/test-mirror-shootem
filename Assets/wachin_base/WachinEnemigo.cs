@@ -7,14 +7,14 @@ using Mirror;
 
 public class WachinEnemigo : NetworkBehaviour
 {
-    static List<WachinEnemigo> wachinEnemigos = new List<WachinEnemigo>();
-    public static int Count => wachinEnemigos.Count;
+    public static List<WachinEnemigo> todes = new List<WachinEnemigo>();
+    public static int Count => todes.Count;
 
     Atacable _objetivo;
     public LayerMask buscadoEnPatrulla;
     public LayerMask visionBlocker;
     public float maxViewDist = 10f;
-    public float distanciaPrudente = 4f;
+    public Vector2 distanciaPrudente = new Vector2(12f, 18f);
     public Vector2 cambiarPosicionCada = new Vector2(4f, 9f);
     public Vector2 dispararCada = new Vector2(0f, 2f);
 
@@ -56,11 +56,11 @@ public class WachinEnemigo : NetworkBehaviour
 
     void Awake()
     {
-        wachinEnemigos.Add(this);
+        todes.Add(this);
     }
     void OnDestroy()
     {
-        wachinEnemigos.Remove(this);
+        todes.Remove(this);
         if (_patrulla != null) _patrulla.Remove(this);
     }
 
@@ -70,11 +70,13 @@ public class WachinEnemigo : NetworkBehaviour
         if (Atacable) Atacable.AlRecibirAtaque += RecibirAtaque;
     }
     [ServerCallback]
-    void OnEnable() {
+    void OnEnable()
+    {
         rutina = StartCoroutine(Rutina());
     }
     [ServerCallback]
-    void OnDisable() {
+    void OnDisable()
+    {
         StopCoroutine(rutina);
     }
 
@@ -106,15 +108,40 @@ public class WachinEnemigo : NetworkBehaviour
     IEnumerator Combatir()
     {
         Wachin.Rifle = true;
-        var offsetDePosDeAtaque = Quaternion.Euler(0f, Random.value * 360f, 0f) * Vector3.right * distanciaPrudente;
+        var distanciaPrudenteActual = Random.Range(distanciaPrudente[0], distanciaPrudente[1]);
+        var offsetDePosDeAtaque = Quaternion.Euler(0f, Random.value * 360f, 0f) * Vector3.right * distanciaPrudenteActual;
         var cambiarPosicionCuando = Time.time + Random.Range(cambiarPosicionCada[0], cambiarPosicionCada[1]);
         var dispararCuando = Time.time + Random.Range(dispararCada[0], dispararCada[1]);
+
+        var wachinObjetivo = _objetivo.GetComponent<WachinLogica>();
+
         while (_objetivo)
         {
             if (Time.time >= cambiarPosicionCuando)
             {
                 cambiarPosicionCuando = Time.time + Random.Range(cambiarPosicionCada[0], cambiarPosicionCada[1]);
+
+                distanciaPrudenteActual = Random.Range(distanciaPrudente[0], distanciaPrudente[1]);
+                offsetDePosDeAtaque = offsetDePosDeAtaque.normalized * distanciaPrudenteActual;
+
                 offsetDePosDeAtaque = Quaternion.Euler(0f, Random.value * 360f, 0f) * offsetDePosDeAtaque;
+
+                var nuevoObjetivo = VigilarPorNuevoObjetivo();
+                if (nuevoObjetivo)
+                {
+                    Patrulla.NuevoObjetivo(nuevoObjetivo);
+                }
+                // var posibleNuevoObjetivo = Patrulla.TomarObjetivoRandom();
+                var posiblesNuevosObjetivos = Patrulla.objetivosRegistrados.Select(at => at.GetComponent<WachinLogica>())
+                    .Where(wa => wa && !wa.Noqueade).ToArray();
+                if (posiblesNuevosObjetivos.Length > 0){
+                    var posibleNuevoObjetivo = posiblesNuevosObjetivos[Random.Range(0, posiblesNuevosObjetivos.Length)];
+                    if (posibleNuevoObjetivo)
+                    {
+                        _objetivo = posibleNuevoObjetivo.GetComponent<Atacable>();
+                        wachinObjetivo = posibleNuevoObjetivo;
+                    }
+                }
             }
             Wachin.MiraHacia = _objetivo.transform.position;
 
@@ -130,7 +157,7 @@ public class WachinEnemigo : NetworkBehaviour
                 Wachin.PosBuscada = posOfInterest;//_objetivo.transform.position+(transform.position-_objetivo.transform.position).normalized*distanciaPrudente;
             }
 
-            if (Time.time >= dispararCuando)
+            if (Time.time >= dispararCuando && wachinObjetivo && !wachinObjetivo.Noqueade)
             {
                 dispararCuando = Time.time + Random.Range(dispararCada[0], dispararCada[1]);
                 posOfInterest = transform.position + offUp;//shoot from
@@ -150,7 +177,7 @@ public class WachinEnemigo : NetworkBehaviour
         Wachin.Rifle = false;
 
         var offsetDePatrulla = Quaternion.Euler(0f, Random.value * 360f, 0f) * Vector3.right;
-        var distOffsetDePatrulla = Random.value*(liderazgo?liderazgo.rangoAutoAsociarPatrulla:1f);
+        var distOffsetDePatrulla = Random.value * (liderazgo ? liderazgo.rangoAutoAsociarPatrulla : 1f);
         var cambiarPosicionCuando = Time.time + Random.Range(cambiarPosicionCada[0], cambiarPosicionCada[1]);
 
         while (!_objetivo)
@@ -164,9 +191,10 @@ public class WachinEnemigo : NetworkBehaviour
                 }
                 else
                 {
-                    var newPos = Patrulla.PosLider + offsetDePatrulla*distOffsetDePatrulla;
+                    var newPos = Patrulla.PosLider + offsetDePatrulla * distOffsetDePatrulla;
                     var hit = new NavMeshHit();
-                    if (NavMesh.Raycast(Patrulla.PosLider, newPos, out hit, NavMesh.AllAreas)) {
+                    if (NavMesh.Raycast(Patrulla.PosLider, newPos, out hit, NavMesh.AllAreas))
+                    {
                         Wachin.PosBuscada = hit.position;
                     }
                     else Wachin.PosBuscada = newPos;
@@ -178,28 +206,46 @@ public class WachinEnemigo : NetworkBehaviour
             {
                 cambiarPosicionCuando = Time.time + Random.Range(cambiarPosicionCada[0], cambiarPosicionCada[1]);
                 offsetDePatrulla = Quaternion.Euler(0f, Random.value * 360f, 0f) * offsetDePatrulla;
-                distOffsetDePatrulla = Random.value*liderazgo.rangoAutoAsociarPatrulla;
+                distOffsetDePatrulla = Random.value * liderazgo.rangoAutoAsociarPatrulla;
             }
 
-            var offUp = Wachin.Agent.height * Vector3.up * 0.5f;
-            var rayOrigin = transform.position + offUp;
-            var posObjetivos = Atacable.atacables.Where(at => buscadoEnPatrulla == (buscadoEnPatrulla | (1 << at.gameObject.layer)))
-                .Where(at => Vector3.Distance(transform.position, at.transform.position) < maxViewDist);
-            foreach (var _posObjetivo in posObjetivos)
+            var objetivoDePatrulla = Patrulla.TomarObjetivoRandom();
+            if (objetivoDePatrulla)
             {
-
-                var attPos = _posObjetivo.transform.position + offUp;
-                if (!Physics.Raycast(rayOrigin, attPos - rayOrigin, out hit, Vector3.Distance(rayOrigin, attPos), visionBlocker))
+                _objetivo = objetivoDePatrulla;
+            }
+            else
+            {
+                var nuevoObjetivo = VigilarPorNuevoObjetivo();
+                if (nuevoObjetivo)
                 {
-                    _objetivo = _posObjetivo;
+                    Patrulla.NuevoObjetivo(_objetivo = nuevoObjetivo);
                     yield break;
-                    //alerta!
                 }
-
             }
 
             yield return null;
         }
+    }
+
+    Atacable VigilarPorNuevoObjetivo()
+    {
+        var offUp = Wachin.Agent.height * Vector3.up * 0.5f;
+        var rayOrigin = transform.position + offUp;
+        var posObjetivos = Atacable.atacables.Where(a => !Patrulla.ObjetivoRegistrado(a))
+            .Where(at => buscadoEnPatrulla == (buscadoEnPatrulla | (1 << at.gameObject.layer)))
+            .Where(at => Vector3.Distance(transform.position, at.transform.position) < maxViewDist);
+        foreach (var _posObjetivo in posObjetivos)
+        {
+
+            var attPos = _posObjetivo.transform.position + offUp;
+            if (!Physics.Raycast(rayOrigin, attPos - rayOrigin, out hit, Vector3.Distance(rayOrigin, attPos), visionBlocker))
+            {
+                return _posObjetivo;
+            }
+
+        }
+        return null;
     }
 
     void OnDrawGizmosSelected()
@@ -207,7 +253,7 @@ public class WachinEnemigo : NetworkBehaviour
         if (_objetivo)
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawLine(transform.position, Vector3.MoveTowards(_objetivo.transform.position, transform.position, distanciaPrudente));
+            Gizmos.DrawLine(transform.position, Vector3.MoveTowards(_objetivo.transform.position, transform.position, distanciaPrudente[0]));
 
             Gizmos.DrawWireSphere(hit.point, .1f);
         }

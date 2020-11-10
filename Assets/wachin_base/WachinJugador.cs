@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using System.Linq;
 
 [DisallowMultipleComponent]
 public class WachinJugador : NetworkBehaviour
@@ -38,6 +39,10 @@ public class WachinJugador : NetworkBehaviour
     [SerializeField] Transform cabezaRefe;
 
     [SerializeField] int mouseAttackButton = 0, mouseRollButton = 1;
+    [Header("Mal Herido")]
+    public float factorMovMalherido = 0.65f;
+    public float factorDisparosMalherido = 1.5f;
+    public float factorRecargaMalherido = 1.5f;
 
     WachinLogica _wachin;
     public WachinLogica Wachin => _wachin ? _wachin : _wachin = GetComponent<WachinLogica>();
@@ -59,6 +64,34 @@ public class WachinJugador : NetworkBehaviour
     public float HPActual => maxHp - (Atacable ? Atacable.dañoAcumulado : 0);
     Atacable _atacable;
     public Atacable Atacable => _atacable ? _atacable : _atacable = GetComponent<Atacable>();
+
+    bool _malHerido = false;
+    bool MalHerido {
+        get => _malHerido;
+        set {
+            if (_malHerido != value) {
+                _malHerido = value;
+                if (_malHerido) {
+                    Wachin.puedeRollar = false;
+                    Wachin.MaxVel *= factorMovMalherido;
+                    reloadDuration *= factorRecargaMalherido;
+                    var rifle = GetComponentInChildren<Rifle>();
+                    if (rifle) rifle.cooldown *= factorDisparosMalherido;
+                    var escopeta = GetComponentInChildren<Escopeta>();
+                    if (escopeta) escopeta.stats.cooldown *= factorDisparosMalherido;
+                }
+                else {
+                    Wachin.puedeRollar = true;
+                    Wachin.MaxVel /= factorMovMalherido;
+                    reloadDuration /= factorRecargaMalherido;
+                    var rifle = GetComponentInChildren<Rifle>();
+                    if (rifle) rifle.cooldown /= factorDisparosMalherido;
+                    var escopeta = GetComponentInChildren<Escopeta>();
+                    if (escopeta) escopeta.stats.cooldown /= factorDisparosMalherido;
+                }
+            }
+        }
+    }
 
     [ServerCallback]
     void Awake()
@@ -87,9 +120,21 @@ public class WachinJugador : NetworkBehaviour
     {
         if (Atacable.dañoAcumulado >= maxHp)
         {
-            Destroy(gameObject);
+            Noquear();
+            // Destroy(gameObject);
             // NetworkServer.Destroy(gameObject);
         }
+    }
+
+    void Noquear() {
+        MalHerido = true;
+        Wachin.Noqueade = true;
+        StartCoroutine(GameUtils.EsperarTrueLuegoHacerCallback(
+            ()=>!Wachin.Noqueade
+                || !WachinEnemigo.todes
+                    .Any(enemigo=>Vector3.Distance(transform.position,enemigo.transform.position)<enemigo.maxViewDist),
+            ()=>Wachin.Noqueade = false
+        ));
     }
 
     IEnumerator Reload()
@@ -149,7 +194,7 @@ public class WachinJugador : NetworkBehaviour
 
         if (!isServer) return;
 
-        if (shotIntent && !Wachin.IsRolling)
+        if (shotIntent && !Wachin.IsRolling && !Wachin.Noqueade)
         {
             if (_currentBulletCount > 0)
             {

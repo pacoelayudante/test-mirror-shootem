@@ -47,8 +47,10 @@ public class BibliotecaBrutaDeMods : ScriptableObject
         escopeta.vfxPrefab = rifle.vfxPrefab;
 
         var jug = wachin.GetComponent<WachinJugador>();
-        jug.ClipSize = escopetaClipSize;
-        jug.reloadDuration *= escopetaFactorReloadTime;
+        if (jug) {
+            jug.ClipSize = escopetaClipSize;
+            jug.reloadDuration *= escopetaFactorReloadTime;
+        }
 
         Destroy(rifle);
     }

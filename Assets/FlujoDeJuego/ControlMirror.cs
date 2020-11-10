@@ -19,14 +19,12 @@ public class ControlMirror : MonoBehaviour
     }
 
     public GameObject serverMenu, lobbyMenu;
-    bool onGame;
     
     public void StartHost() {
         if (NetworkManager.singleton) {
             NetworkManager.singleton.StartHost();
         serverMenu.SetActive(false);
         lobbyMenu.SetActive(true);
-        onGame = true;
         if (!string.IsNullOrEmpty(gameScene)) NetworkManager.singleton.ServerChangeScene(gameScene);
         }
     }
@@ -47,7 +45,6 @@ public class ControlMirror : MonoBehaviour
     // }
 
     public void Jugar() {
-        onGame = true;
         serverMenu.SetActive(false);
         lobbyMenu.SetActive(false);
 
