@@ -20,11 +20,27 @@ public class ControlMirror : MonoBehaviour
 
     public GameObject serverMenu, lobbyMenu;
     
+    void Start() {        
+        NetworkManager.singleton.GetComponent<Transport>().OnClientDisconnected.AddListener( ()=>{   
+            serverMenu.SetActive(true);
+            lobbyMenu.SetActive(false);
+        });
+        NetworkManager.singleton.GetComponent<Transport>().OnClientConnected.AddListener( ()=>{
+            serverMenu.SetActive(false);
+            lobbyMenu.SetActive(true);
+        });
+
+        NetworkManager.singleton.GetComponent<Transport>().OnServerDisconnected.AddListener( (valor)=>{   
+            serverMenu.SetActive(true);
+            lobbyMenu.SetActive(false);
+        });
+    }
+
     public void StartHost() {
         if (NetworkManager.singleton) {
             NetworkManager.singleton.StartHost();
-        serverMenu.SetActive(false);
-        lobbyMenu.SetActive(true);
+        // serverMenu.SetActive(false);
+        // lobbyMenu.SetActive(true);
         if (!string.IsNullOrEmpty(gameScene)) NetworkManager.singleton.ServerChangeScene(gameScene);
         }
     }
@@ -34,21 +50,10 @@ public class ControlMirror : MonoBehaviour
         if (NetworkManager.singleton) {
             // NetworkManager.singleton.StartClient( new System.Uri(ip) );
             NetworkManager.singleton.StartClient();
-        serverMenu.SetActive(false);
-        lobbyMenu.SetActive(true);
+        // serverMenu.SetActive(false);
+        // lobbyMenu.SetActive(true);
         }
     }
 
-    // private void Update() {
-    //     serverMenu.SetActive(!NetworkManager.singleton.isNetworkActive);
-    //     lobbyMenu.SetActive(!onGame && NetworkManager.singleton.isNetworkActive && !RondaActual.actual && NetworkServer.active);
-    // }
-
-    public void Jugar() {
-        serverMenu.SetActive(false);
-        lobbyMenu.SetActive(false);
-
-        if (!string.IsNullOrEmpty(gameScene)) NetworkManager.singleton.ServerChangeScene(gameScene);
-    }
 
 }

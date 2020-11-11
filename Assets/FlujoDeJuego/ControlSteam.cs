@@ -17,7 +17,10 @@ public static class ControlSteam
         try
         {
             SteamClient.Init(480);
-        }
+
+            SteamMatchmaking.OnLobbyCreated += (res,lob)=>Debug.Log($"lob created {res} - {lob.Owner} {lob.Id}");
+            SteamMatchmaking.OnLobbyEntered += (lob)=>Debug.Log($"lob entered {lob.Owner} {lob.Id}");
+        } 
         catch (System.Exception e)
         {
             Debug.LogError(e);

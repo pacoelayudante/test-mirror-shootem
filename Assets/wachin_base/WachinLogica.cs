@@ -239,6 +239,7 @@ public class WachinLogica : NetworkBehaviour
 
     [Client]
     void PositionPrediction() {
+        if (lastReceivedPosT==prevToLastPosT) return;
         var posVieja = RondaActual.actual.GetIndexedPosition(prevToLastPos);
         var posNecesaria = RondaActual.actual.GetIndexedPosition(lastReceivedPos);
         var posDiff = (posNecesaria-posVieja);

@@ -39,27 +39,26 @@ public class SteamLobbyControl : MonoBehaviour
             ));
 
         NetworkManager.singleton.GetComponent<Transport>().OnClientDisconnected.AddListener( ()=>{
-            SetearInteractivo(true);            
-            panelDeConexion.SetActive(false);
-            panelDeJuego.SetActive(true);
+            SetearInteractivo(true);    
+            panelDeConexion.SetActive(true);
+            panelDeJuego.SetActive(false);        
         });
         NetworkManager.singleton.GetComponent<Transport>().OnClientConnected.AddListener( ()=>{
-            panelDeConexion.SetActive(true);
-            panelDeJuego.SetActive(false);
-        });
-
-        NetworkManager.singleton.GetComponent<Transport>().OnServerDisconnected.AddListener( (valor)=>{
-            SetearInteractivo(true);            
             panelDeConexion.SetActive(false);
             panelDeJuego.SetActive(true);
+        });
+        NetworkManager.singleton.GetComponent<Transport>().OnServerDisconnected.AddListener( (valor)=>{
+            SetearInteractivo(true);       
+            panelDeConexion.SetActive(true);
+            panelDeJuego.SetActive(false);       
         });
     }
     void StartCuandoSteam()
     {
         if (refrescarLista) refrescarLista.interactable = true;
 
-        if (abrirServer) abrirServer.onClick.AddListener(AbrirServidorAsync);
-        if (refrescarLista) refrescarLista.onClick.AddListener(RefrescarListaAsync);
+        if (abrirServer) abrirServer.onClick.AddListener(AbrirServidor);
+        if (refrescarLista) refrescarLista.onClick.AddListener(RefrescarLista);
 
         friendsList = SteamFriends.GetFriends().ToArray();
 
@@ -72,7 +71,7 @@ public class SteamLobbyControl : MonoBehaviour
             bot.onClick.AddListener(() => UnirseAlServidorAmigo(friend));
             botonAutoJoin.Add(friend, bot);
         }
-
+        
         if (unirseManual)
         {
             unirseManual.AddOptions(
@@ -89,34 +88,55 @@ public class SteamLobbyControl : MonoBehaviour
            });
         }
 
-        RefrescarListaAsync();
+        RefrescarLista();
         
         SetearInteractivo(true);
+
+        // SteamMatchmaking.LobbyList.RequestAsync().ContinueWith((lobbis)=>{
+        //     Debug.Log("list returned");
+        //     foreach(var lobbi in lobbies) {
+        //         Debug.Log($"lobbi {lobbi.Key} - {lobbi.Value.Data} - {lobbi.Value.Id} - {lobbi.Value.Owner}");
+        //     }
+        // });
     }
 
-    public async void RefrescarListaAsync()
+    public void RefrescarLista()
     {
         if (refrescarLista) refrescarLista.interactable = false;
-        foreach (var f in friendsList)
-        {
-            if (botonAutoJoin == null || !botonAutoJoin[f]) continue;//por ahi se destruyo todo en el medio de los awaits?
-            // if ( ! f.IsPlayingThisGame ) {
-            //     botonAutoJoin[f].gameObject.SetActive(false);
-            //     continue;
-            // }
-            await f.RequestInfoAsync();
-            lobbies.Remove(f);
-            if (f.GameInfo?.Lobby == null)
-            {
-                botonAutoJoin[f].gameObject.SetActive(false);
+        foreach(var bot in botonAutoJoin.Values.Where(b=>b)) bot.gameObject.SetActive(false);
+        
+        SteamMatchmaking.LobbyList.FilterDistanceWorldwide().RequestAsync().ContinueWith(resultado=>{
+            foreach(var lobbi in resultado.Result) {
+                Debug.Log($"lobbi - {lobbi.Owner}");
+                if (botonAutoJoin != null && botonAutoJoin.ContainsKey(lobbi.Owner) && botonAutoJoin[lobbi.Owner]) {
+                    botonAutoJoin[lobbi.Owner].gameObject.SetActive(true);
+                }
             }
-            else
-            {
-                lobbies.Add(f, f.GameInfo?.Lobby ?? default(Lobby));
-                botonAutoJoin[f].gameObject.SetActive(true);
-            }
-        }
-        if (refrescarLista) refrescarLista.interactable = true;
+            if (refrescarLista) refrescarLista.interactable = true;
+        });
+
+        
+
+        // foreach (var f in friendsList)
+        // {
+        //     if (botonAutoJoin == null || !botonAutoJoin[f]) continue;//por ahi se destruyo todo en el medio de los awaits?
+        //     // if ( ! f.IsPlayingThisGame ) {
+        //     //     botonAutoJoin[f].gameObject.SetActive(false);
+        //     //     continue;
+        //     // }
+        //     await f.RequestInfoAsync();
+        //     lobbies.Remove(f);
+        //     if (f.GameInfo?.Lobby == null)
+        //     {
+        //         botonAutoJoin[f].gameObject.SetActive(false);
+        //     }
+        //     else
+        //     {
+        //         lobbies.Add(f, f.GameInfo?.Lobby ?? default(Lobby));
+        //         botonAutoJoin[f].gameObject.SetActive(true);
+        //     }
+        // }
+        // if (refrescarLista) refrescarLista.interactable = true;
     }
 
     public void UnirseAlServidorAmigo(Friend f)
@@ -135,29 +155,22 @@ public class SteamLobbyControl : MonoBehaviour
         await SteamMatchmaking.JoinLobbyAsync(lobbi.Id);
     }
 
-    public async void AbrirServidorAsync()
+    public void AbrirServidor()
     {
         if (abrirServer) abrirServer.interactable = false;
         if (unirseManual) unirseManual.interactable = false;
         foreach (var bot in botonAutoJoin.Values) bot.interactable = false;
 
-        var lobbiTalVez = await SteamMatchmaking.CreateLobbyAsync();
-        if (lobbiTalVez != null)
-        {
-            var lobbi = lobbiTalVez ?? default(Lobby);
-            lobbi.SetPublic();
-            NetworkManager.singleton.StartHost();
-
             panelDeConexion.SetActive(false);
             panelDeJuego.SetActive(true);
-
+            NetworkManager.singleton.StartHost();
             if(!string.IsNullOrEmpty(gameScene)) NetworkManager.singleton.ServerChangeScene(gameScene);
-        }
-        else
-        {
-            if (abrirServer) abrirServer.interactable = true;
-            if (unirseManual) unirseManual.interactable = true;
-            foreach (var bot in botonAutoJoin.Values) bot.interactable = true;
-        }
+
+        var lobbiTalVez = SteamMatchmaking.CreateLobbyAsync().ContinueWith(resultado=>{
+            if (resultado.Result.HasValue) {
+                var lobbi = resultado.Result.Value;
+                lobbi.SetPublic();
+            }
+        });
     }
 }
